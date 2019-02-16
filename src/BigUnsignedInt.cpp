@@ -325,16 +325,23 @@ std::pair<BigUnsignedIntBase10, BigUnsignedIntBase10> BigUnsignedIntBase10::quot
     }
 
     quotient._digitsNumber = quotient.countSignificantNumbers();
-    return std::make_pair(quotient, BigUnsignedIntBase10(std::to_string(r)));
+    return std::make_pair(quotient, BigUnsignedIntBase10(_base, std::to_string(r)));
 }
 
-BigUnsignedIntBase10::BigUnsignedIntBase10(std::string_view str) : BigUnsignedIntBase10()
+BigUnsignedIntBase10::BigUnsignedIntBase10(Digit base, std::string_view str) : _base(base), _max_digit(base - 1)
 {
     createFromString(str, *this);
 }
 
-BigUnsignedIntBase10::BigUnsignedIntBase10(UnsignedVector::const_iterator b, UnsignedVector::const_iterator e)
+BigUnsignedIntBase10::BigUnsignedIntBase10(Digit base, UnsignedVector::const_iterator b,
+                                           UnsignedVector::const_iterator e)
+        : _base(base), _max_digit(base - 1)
 {
+    for (auto it = b; it != e; ++it)
+    {
+        if (*it >= base)
+            throw invalid_argument("Digits in range must be less than base");
+    }
     _digits = UnsignedVector(b, e);
     _digitsNumber = size();
 }
@@ -369,6 +376,13 @@ void BigUnsignedIntBase10::createFromString(string_view str, BigUnsignedIntBase1
     transform(str.rbegin(), str.rend(), number._digits.begin(), [](string::value_type letter) {
         return static_cast<Digit>(letter - '0');
     });
+
+    //TODO: make check before or during transformation
+    for (auto it = number._digits.begin(); it != number._digits.end(); ++it)
+    {
+        if (*it >= number._base)
+            throw invalid_argument("Digits in string must be less than base");
+    }
 }
 
 void BigUnsignedIntBase10::resize(size_type size) { _digits.resize(size, 0); }

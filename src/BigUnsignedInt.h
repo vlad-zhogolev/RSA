@@ -11,8 +11,6 @@
 #include <regex>
 #include <queue>
 
-const std::size_t BIG_UNSIGNED_INT_SIZE = 64;
-
 class BigUnsignedIntBase10;
 
 /**
@@ -140,9 +138,6 @@ public:
     using UnsignedVector = std::vector<Digit>;
     using size_type = UnsignedVector::size_type;
 
-    static const Digit _base = 10;
-    static const Digit _max_digit = _base - 1;
-
     ///
     /// Friends
     ///
@@ -164,26 +159,26 @@ public:
 public:
 
     ///\brief Default constructor
-    BigUnsignedIntBase10() = default;
+    BigUnsignedIntBase10(Digit base) : _digits(0), _digitsNumber(1), _base(base), _max_digit(base - 1) {}
 
     /**\brief Creates BigUnsignedInt object from string representation.
      * Throws same exceptions as createFromString for the same reasons.
      * @param stringRepr - string containing an unsigned number
      */
-    explicit BigUnsignedIntBase10(std::string_view str);
+    explicit BigUnsignedIntBase10(Digit base, std::string_view str);
 
     /**
      * \brief Creates BigUnisgnedInt object capable to hold size digits.
      * @param size - quantity of digits in this number.
      */
-    explicit BigUnsignedIntBase10(size_type size) : _digits(size, 0), _digitsNumber(size) {}
+    explicit BigUnsignedIntBase10(Digit base, size_type size) : _digits(size, 0), _digitsNumber(size) {}
 
     /**
      * Creates number from specified range.
      * @param b - iterator to the least significant digit.
      * @param e - iterator to past the most significant digit.
      */
-    BigUnsignedIntBase10(UnsignedVector::const_iterator b, UnsignedVector::const_iterator e);
+    BigUnsignedIntBase10(Digit base, UnsignedVector::const_iterator b, UnsignedVector::const_iterator e);
 
     /**\brief Increases this BigUnsignedInt by other.
      * @param other - BigUnsignedInt to add
@@ -309,6 +304,8 @@ private:
 private:
     UnsignedVector _digits; // Stores digit of the number in reverse order (little-endian)
     size_type _digitsNumber; // number of significant digits
+    Digit _base;
+    Digit _max_digit;
 };
 
 #endif //BIGUNSIGNEDINTEGER_BIGUNSIGNEDINT_H
