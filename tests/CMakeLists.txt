@@ -1,0 +1,2 @@
+add_subdirectory(libs/googletest)
+add_subdirectory(big_integer_tests)
