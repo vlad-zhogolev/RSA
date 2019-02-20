@@ -11,7 +11,7 @@
 #include <regex>
 #include <queue>
 
-class BigUnsignedIntBase10;
+class BigUnsignedInt;
 
 /**
  * Template of input operator for BigUnsignedInt of size N. Expects
@@ -21,7 +21,7 @@ class BigUnsignedIntBase10;
  * @param bigUnsignedInt - object to store number read
  * @return - reference to is
  */
-std::istream& operator>>(std::istream& is, BigUnsignedIntBase10& bigUnsignedInt);
+std::istream& operator>>(std::istream& is, BigUnsignedInt& bigUnsignedInt);
 
 /**
  * Template of output operator for BigUnsignedInt of size N. Outputs
@@ -31,7 +31,7 @@ std::istream& operator>>(std::istream& is, BigUnsignedIntBase10& bigUnsignedInt)
  * @param number - object to write to stream
  * @return - reference to os
  */
-std::ostream& operator<<(std::ostream& os, const BigUnsignedIntBase10& number);
+std::ostream& operator<<(std::ostream& os, const BigUnsignedInt& number);
 
 /**
  * Template of output operator for BigUnsignedInt rvalues of size N.
@@ -41,7 +41,7 @@ std::ostream& operator<<(std::ostream& os, const BigUnsignedIntBase10& number);
  * @param bigUnsignedInt - object to write to stream
  * @return - reference to os
  */
-std::ostream& operator<<(std::ostream& os, BigUnsignedIntBase10&& bigUnsignedInt);
+std::ostream& operator<<(std::ostream& os, BigUnsignedInt&& bigUnsignedInt);
 
 /**
  * Template of shift to the left operator for BigUnsignedInt of size N.
@@ -51,7 +51,7 @@ std::ostream& operator<<(std::ostream& os, BigUnsignedIntBase10&& bigUnsignedInt
  * @return - copy of bigUnsignedInt shifted by the provided number of bits
  */
 
-/*BigUnsignedIntBase10 operator<<(BigUnsignedIntBase10 bigUnsignedInt, std::size_t shift);*/
+/*BigUnsignedInt operator<<(BigUnsignedInt bigUnsignedInt, std::size_t shift);*/
 
 /**
  * Template of operator+ for BigUnsignedInt of size N.
@@ -60,7 +60,7 @@ std::ostream& operator<<(std::ostream& os, BigUnsignedIntBase10&& bigUnsignedInt
  * @param b - second operand
  * @return - sum of first and second operands
  */
-BigUnsignedIntBase10 operator+(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+BigUnsignedInt operator+(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
 /**
  * Template of operator- for BigUnsignedInt of size N.
@@ -69,7 +69,7 @@ BigUnsignedIntBase10 operator+(const BigUnsignedIntBase10& a, const BigUnsignedI
  * @param b - second operand
  * @return - difference between first and second operands
  */
-BigUnsignedIntBase10 operator-(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+BigUnsignedInt operator-(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
 /**
  * Tempalate of operator* for BigUnsignedInt of size N.
@@ -78,7 +78,7 @@ BigUnsignedIntBase10 operator-(const BigUnsignedIntBase10& a, const BigUnsignedI
  * @param b - second operand
  * @return - product of first and second operands
  */
-BigUnsignedIntBase10 operator*(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+BigUnsignedInt operator*(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
 /**
  *
@@ -86,7 +86,7 @@ BigUnsignedIntBase10 operator*(const BigUnsignedIntBase10& a, const BigUnsignedI
  * @param b
  * @return
  */
-BigUnsignedIntBase10 operator/(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+BigUnsignedInt operator/(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
 /**
  *
@@ -94,8 +94,8 @@ BigUnsignedIntBase10 operator/(const BigUnsignedIntBase10& a, const BigUnsignedI
  * @param b
  * @return
  */
-std::pair<BigUnsignedIntBase10, BigUnsignedIntBase10>
-quotientAndMod(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+std::pair<BigUnsignedInt, BigUnsignedInt>
+quotientAndMod(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
 /**
  *
@@ -103,17 +103,17 @@ quotientAndMod(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
  * @param b
  * @return
  */
-bool operator<(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+bool operator<(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
-bool operator>(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+bool operator>(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
-bool operator<=(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+bool operator<=(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
-bool operator>=(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+bool operator>=(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
-bool operator==(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+bool operator==(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
-bool operator!=(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+bool operator!=(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
 /**
  *
@@ -121,14 +121,14 @@ bool operator!=(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
  * @param b
  * @return
  */
-BigUnsignedIntBase10 MultInverse(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+BigUnsignedInt MultInverse(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
 /**
  * BigUnsignedInt class represents unsigned integer which has N bits
  * in binary representation.
  * @tparam N - number of bits in unsigned integer
  */
-class BigUnsignedIntBase10 {
+class BigUnsignedInt {
 public:
 
     ///
@@ -141,69 +141,69 @@ public:
     ///
     /// Friends
     ///
-    friend std::istream& operator>>(std::istream& is, BigUnsignedIntBase10& bigUnsignedInt);
+    friend std::istream& operator>>(std::istream& is, BigUnsignedInt& bigUnsignedInt);
 
-    friend std::ostream& operator<<(std::ostream& os, const BigUnsignedIntBase10& bigUnsignedInt);
+    friend std::ostream& operator<<(std::ostream& os, const BigUnsignedInt& bigUnsignedInt);
 
-    friend std::ostream& operator<<(std::ostream& os, BigUnsignedIntBase10&& bigUnsignedInt);
+    friend std::ostream& operator<<(std::ostream& os, BigUnsignedInt&& bigUnsignedInt);
 
-    friend bool operator<(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+    friend bool operator<(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
-    friend bool operator==(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+    friend bool operator==(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
-    friend BigUnsignedIntBase10 operator*(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+    friend BigUnsignedInt operator*(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
-    friend std::pair<BigUnsignedIntBase10, BigUnsignedIntBase10>
-    quotientAndMod(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b);
+    friend std::pair<BigUnsignedInt, BigUnsignedInt>
+    quotientAndMod(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
 public:
 
-    ///\brief Default constructor
-    BigUnsignedIntBase10(Digit base) : _digits(0), _digitsNumber(1), _base(base), _max_digit(base - 1) {}
+    ///\brief Constructs unsigned integer with zero value in specified base.
+    explicit BigUnsignedInt(Digit base) : _digits(0), _digitsNumber(1), _base(base), _max_digit(base - 1) {}
 
     /**\brief Creates BigUnsignedInt object from string representation.
      * Throws same exceptions as createFromString for the same reasons.
      * @param stringRepr - string containing an unsigned number
      */
-    explicit BigUnsignedIntBase10(Digit base, std::string_view str);
+    explicit BigUnsignedInt(Digit base, std::string_view str);
 
     /**
      * \brief Creates BigUnisgnedInt object capable to hold size digits.
      * @param size - quantity of digits in this number.
      */
-    explicit BigUnsignedIntBase10(Digit base, size_type size) : _digits(size, 0), _digitsNumber(size) {}
-
+    explicit BigUnsignedInt(Digit base, size_type size) : _digits(size, 0), _digitsNumber(size), _base(base),
+                                                          _max_digit(base - 1) {}
     /**
      * Creates number from specified range.
      * @param b - iterator to the least significant digit.
      * @param e - iterator to past the most significant digit.
      */
-    BigUnsignedIntBase10(Digit base, UnsignedVector::const_iterator b, UnsignedVector::const_iterator e);
+    BigUnsignedInt(Digit base, UnsignedVector::const_iterator b, UnsignedVector::const_iterator e);
 
     /**\brief Increases this BigUnsignedInt by other.
      * @param other - BigUnsignedInt to add
      * @return - reference to *this object increased by other
      */
-    BigUnsignedIntBase10& operator+=(const BigUnsignedIntBase10& other);
+    BigUnsignedInt& operator+=(const BigUnsignedInt& other);
 
     /**\brief Decreases this BigUnsignedInt by other.
      * @param other - BigUnsignedInt to subtract
      * @return - reference to *this object decreased by other
      */
-    BigUnsignedIntBase10& operator-=(const BigUnsignedIntBase10& other);
+    BigUnsignedInt& operator-=(const BigUnsignedInt& other);
 
     /**\brief Multiplies this BigUnsignedInt by other.
      * @param other - BigUnsignedInt to multiply on
      * @return - reference to *this object multiplied by other
      */
-    BigUnsignedIntBase10& operator*=(const BigUnsignedIntBase10& other);
+    BigUnsignedInt& operator*=(const BigUnsignedInt& other);
 
     /**
      * \brief Divides this BigUnsignedInt by other.
      * @param other - BigUnsignedInt to divide by.
      * @return - reference to *this object divided by other
      */
-    BigUnsignedIntBase10& operator/=(const BigUnsignedIntBase10& other);
+    BigUnsignedInt& operator/=(const BigUnsignedInt& other);
 
     /**
      * \brief Divides this BigUnsignedInt by other, returning quotient and reminder.
@@ -212,21 +212,31 @@ public:
      * @return - pair (quotient, reminder), where quotient is reference to *this object
      * and reminder is ordinary BigUnsignedInt.
      */
-    std::pair<BigUnsignedIntBase10, BigUnsignedIntBase10> quotientAndMod(const BigUnsignedIntBase10& other) const;
+    std::pair<BigUnsignedInt, BigUnsignedInt> quotientAndMod(const BigUnsignedInt& other) const;
 
     /**
      *
      * @param degree
      * @return
      */
-    BigUnsignedIntBase10 pow(const BigUnsignedIntBase10& degree);
+    BigUnsignedInt pow(const BigUnsignedInt& degree);
+
+    /**
+     *
+     * @param degree
+     * @param mod
+     * @return
+     */
+    BigUnsignedInt pow(const BigUnsignedInt& degree, const BigUnsignedInt& mod);
 
     /**
      *
      * @param a
      * @return
      */
-    BigUnsignedIntBase10 multInverse(BigUnsignedIntBase10 a);
+    BigUnsignedInt multInverse(BigUnsignedInt a);
+
+    bool isPrime() const;
 
     /**
      * \brief Provides access to digits of the number by index.
@@ -261,7 +271,7 @@ private:
      * @param input - string containing an unsigned number
      * @param number - object to store the number converted from string
      */
-    static void createFromString(std::string_view str, BigUnsignedIntBase10& number);
+    static void createFromString(std::string_view str, BigUnsignedInt& number);
 
     /**
      * Sets the _digitsNumber with appropriate number.
@@ -273,7 +283,7 @@ private:
      * @param d - digit to divide on.
      * @return - pair (quotient, reminder)
      */
-    std::pair<BigUnsignedIntBase10, BigUnsignedIntBase10> quotientAndMod(Digit d) const;
+    std::pair<BigUnsignedInt, BigUnsignedInt> quotientAndMod(Digit d) const;
 
     /**
      * \breif Resizes number so it can store specified number of digits

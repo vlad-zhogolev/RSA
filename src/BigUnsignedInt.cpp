@@ -2,20 +2,20 @@
 // Created by ZV on 22.09.2018.
 //
 
-#include "BigUnsignedIntBase10.h"
+#include "BigUnsignedInt.h"
 
 using namespace std;
 
-std::istream& operator>>(std::istream& is, BigUnsignedIntBase10& bigUnsignedInt)
+std::istream& operator>>(std::istream& is, BigUnsignedInt& bigUnsignedInt)
 {
     // Check that provided input is unsigned number
     string input;
     is >> input;
-    BigUnsignedIntBase10::createFromString(input, bigUnsignedInt);
+    BigUnsignedInt::createFromString(input, bigUnsignedInt);
     return is;
 }
 
-std::ostream& operator<<(std::ostream& os, const BigUnsignedIntBase10& number)
+std::ostream& operator<<(std::ostream& os, const BigUnsignedInt& number)
 {
     for (auto it = number._digits.rbegin() + number.startIndex();
          it != number._digits.rend(); ++it)
@@ -23,30 +23,30 @@ std::ostream& operator<<(std::ostream& os, const BigUnsignedIntBase10& number)
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, BigUnsignedIntBase10&& bigUnsignedInt)
+std::ostream& operator<<(std::ostream& os, BigUnsignedInt&& bigUnsignedInt)
 {
     os << bigUnsignedInt;
     return os;
 }
 
-BigUnsignedIntBase10 operator+(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b)
+BigUnsignedInt operator+(const BigUnsignedInt& a, const BigUnsignedInt& b)
 {
-    BigUnsignedIntBase10 result(a);
+    BigUnsignedInt result(a);
     return result += b;
 }
 
-BigUnsignedIntBase10 operator-(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b)
+BigUnsignedInt operator-(const BigUnsignedInt& a, const BigUnsignedInt& b)
 {
-    BigUnsignedIntBase10 result(a);
+    BigUnsignedInt result(a);
     return result -= b;
 }
 
-BigUnsignedIntBase10 operator*(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b)
+BigUnsignedInt operator*(const BigUnsignedInt& a, const BigUnsignedInt& b)
 {
-    using size_type = BigUnsignedIntBase10::size_type;
-    using Digit = BigUnsignedIntBase10::size_type;
+    using size_type = BigUnsignedInt::size_type;
+    using Digit = BigUnsignedInt::size_type;
 
-    BigUnsignedIntBase10 result(a._digitsNumber + b._digitsNumber);
+    BigUnsignedInt result(a._base, a._digitsNumber + b._digitsNumber);
 
     for (size_type j = 0; j < b._digitsNumber; ++j)
     {
@@ -54,30 +54,32 @@ BigUnsignedIntBase10 operator*(const BigUnsignedIntBase10& a, const BigUnsignedI
         for (size_type i = 0; i < a._digitsNumber; ++i)
         {
             Digit t = a._digits[i] * b._digits[j] + result._digits[i + j] + k;
-            result._digits[i + j] = t % BigUnsignedIntBase10::_base;
-            k = t / BigUnsignedIntBase10::_base;
+            result._digits[i + j] = t % a._base;
+            k = t / a._base;
         }
         result._digits[j + a._digitsNumber] = k;
     }
 
-    if (result._digits[result._digitsNumber - 1] == 0)
-        --result._digitsNumber;
+    result._digitsNumber = result.countSignificantNumbers();
 
+    /*if (result._digits[result._digitsNumber - 1] == 0)
+        --result._digitsNumber;
+*/
     return result;
 }
 
-BigUnsignedIntBase10 operator/(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b)
+BigUnsignedInt operator/(const BigUnsignedInt& a, const BigUnsignedInt& b)
 {
     return a.quotientAndMod(b).first;
 }
 
-std::pair<BigUnsignedIntBase10, BigUnsignedIntBase10>
-quotientAndMod(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b)
+std::pair<BigUnsignedInt, BigUnsignedInt>
+quotientAndMod(const BigUnsignedInt& a, const BigUnsignedInt& b)
 {
     return a.quotientAndMod(b);
 }
 
-bool operator<(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b)
+bool operator<(const BigUnsignedInt& a, const BigUnsignedInt& b)
 {
     if (a._digitsNumber != b._digitsNumber)
         return a._digitsNumber < b._digitsNumber;
@@ -85,16 +87,16 @@ bool operator<(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b)
     return lexicographical_compare(a.startIter(), a._digits.crend(), b.startIter(), b._digits.crend());
 }
 
-bool operator>(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b) { return b < a; }
+bool operator>(const BigUnsignedInt& a, const BigUnsignedInt& b) { return b < a; }
 
-bool operator<=(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b) { return !(b < a); }
+bool operator<=(const BigUnsignedInt& a, const BigUnsignedInt& b) { return !(b < a); }
 
-bool operator>=(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b) { return !(a < b); }
+bool operator>=(const BigUnsignedInt& a, const BigUnsignedInt& b) { return !(a < b); }
 
-bool operator==(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b)
+bool operator==(const BigUnsignedInt& a, const BigUnsignedInt& b)
 {
     // TODO: write tests
-    using size_type = BigUnsignedIntBase10::size_type;
+    using size_type = BigUnsignedInt::size_type;
 
     if (a._digitsNumber != b._digitsNumber)
         return false;
@@ -107,9 +109,9 @@ bool operator==(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b)
     return true;
 }
 
-bool operator!=(const BigUnsignedIntBase10& a, const BigUnsignedIntBase10& b) { return !(a == b); }
+bool operator!=(const BigUnsignedInt& a, const BigUnsignedInt& b) { return !(a == b); }
 
-BigUnsignedIntBase10& BigUnsignedIntBase10::operator+=(const BigUnsignedIntBase10& other)
+BigUnsignedInt& BigUnsignedInt::operator+=(const BigUnsignedInt& other)
 {
     size_type requiredNumberOfDigits = max(_digitsNumber, other._digitsNumber) + 1;
 
@@ -143,7 +145,7 @@ BigUnsignedIntBase10& BigUnsignedIntBase10::operator+=(const BigUnsignedIntBase1
     return *this;
 }
 
-BigUnsignedIntBase10& BigUnsignedIntBase10::operator-=(const BigUnsignedIntBase10& other)
+BigUnsignedInt& BigUnsignedInt::operator-=(const BigUnsignedInt& other)
 {
     size_type length = min(_digitsNumber, other._digitsNumber);
 
@@ -179,21 +181,21 @@ BigUnsignedIntBase10& BigUnsignedIntBase10::operator-=(const BigUnsignedIntBase1
     return *this;
 }
 
-BigUnsignedIntBase10& BigUnsignedIntBase10::operator*=(const BigUnsignedIntBase10& other)
+BigUnsignedInt& BigUnsignedInt::operator*=(const BigUnsignedInt& other)
 {
     return *this = *this * other;
 }
 
-BigUnsignedIntBase10& BigUnsignedIntBase10::operator/=(const BigUnsignedIntBase10& other)
+BigUnsignedInt& BigUnsignedInt::operator/=(const BigUnsignedInt& other)
 {
     *this = *this / other;
 }
 
-std::pair<BigUnsignedIntBase10, BigUnsignedIntBase10>
-BigUnsignedIntBase10::quotientAndMod(const BigUnsignedIntBase10& other) const
+std::pair<BigUnsignedInt, BigUnsignedInt>
+BigUnsignedInt::quotientAndMod(const BigUnsignedInt& other) const
 {
     if (*this < other)
-        return make_pair(BigUnsignedIntBase10("0"), *this);
+        return make_pair(BigUnsignedInt(_base, "0"), *this);
 
     if (other._digitsNumber == 1)
         return quotientAndMod(other[0]);
@@ -203,13 +205,13 @@ BigUnsignedIntBase10::quotientAndMod(const BigUnsignedIntBase10& other) const
     size_type n = other._digitsNumber;
     const Digit base = _base;
 
-    BigUnsignedIntBase10 quotient(m + 1);
-    BigUnsignedIntBase10 reminder(n);
+    BigUnsignedInt quotient(_base, m + 1);
+    BigUnsignedInt reminder(_base, n);
 
     // Normalization
     Digit d = base / (*other.startIter() + 1);
-    BigUnsignedIntBase10 u = *this * BigUnsignedIntBase10(std::to_string(d));
-    BigUnsignedIntBase10 v = other * BigUnsignedIntBase10(std::to_string(d));
+    BigUnsignedInt u = *this * BigUnsignedInt(_base, std::to_string(d));
+    BigUnsignedInt v = other * BigUnsignedInt(_base, std::to_string(d));
 
     // Won't work if other has only one digit
     auto condition = [v = v[n - 2], base](Digit q, Digit r, Digit u) {
@@ -230,18 +232,18 @@ BigUnsignedIntBase10::quotientAndMod(const BigUnsignedIntBase10& other) const
                 --estimQuotient;
         }
 
-        BigUnsignedIntBase10 uPart(u._digits.begin() + j, u._digits.begin() + j + n + 1);
-        BigUnsignedIntBase10 q(std::to_string(estimQuotient));
-        BigUnsignedIntBase10 qv = q * v;
+        BigUnsignedInt uPart(_base, u._digits.begin() + j, u._digits.begin() + j + n + 1);
+        BigUnsignedInt q(_base, std::to_string(estimQuotient));
+        BigUnsignedInt qv = q * v;
         if (uPart >= qv)
-            uPart -= qv;
+            uPart -= qv;// TODO: check some bug: 25, 7
         else
         {
             --estimQuotient;
             uPart -= qv - v;
         }
         copy(uPart._digits.begin(), uPart._digits.end(), u._digits.begin() + j);
-
+        fill(u._digits.begin() + j + uPart._digitsNumber, u._digits.begin() + j + n + 1, 0);
         quotient[j] = estimQuotient;
     }
 
@@ -252,25 +254,53 @@ BigUnsignedIntBase10::quotientAndMod(const BigUnsignedIntBase10& other) const
     return make_pair(quotient, u.quotientAndMod(d).first);
 }
 
-BigUnsignedIntBase10 BigUnsignedIntBase10::pow(const BigUnsignedIntBase10& degree)
+BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree)
 {
-    // TODO: implement
-    return *this;
+    if (degree._base != 2)
+        throw invalid_argument("Degree base must be 2");
+
+    BigUnsignedInt x(*this);
+    BigUnsignedInt result(2, "1");
+    for (Digit d:degree._digits)
+    {
+        if (d == 1)
+            result *= x;
+        x *= x;
+    }
+    return result;
 }
 
-BigUnsignedIntBase10 BigUnsignedIntBase10::multInverse(BigUnsignedIntBase10 v)
+BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsignedInt& mod)
 {
-    BigUnsignedIntBase10 inv, t1, t3, q;
+    if (degree._base != 2)
+        throw invalid_argument("Degree base must be 2");
+
+    BigUnsignedInt x(*this);
+    BigUnsignedInt result(2, "1");
+    for (Digit d:degree._digits)
+    {
+        if (d == 1)
+            result = (result * x).quotientAndMod(mod).second;
+        //x *= x;
+        //x = x.quotientAndMod(mod).second;
+        x = (x * x).quotientAndMod(mod).second;
+    }
+    return result;
+}
+
+BigUnsignedInt BigUnsignedInt::multInverse(BigUnsignedInt v)
+{
+    BigUnsignedInt inv(_base), t1(_base), t3(_base), q(_base);
     int iter;
     /* Step X1. Initialise */
-    BigUnsignedIntBase10 u1("1");
-    BigUnsignedIntBase10 u3(*this);
-    BigUnsignedIntBase10 v1("0");
-    BigUnsignedIntBase10 v3(v);
+    BigUnsignedInt u1(_base, "1");
+    BigUnsignedInt u3(*this);
+    BigUnsignedInt v1(_base, "0");
+    BigUnsignedInt v3(v);
     /* Remember odd/even iterations */
     iter = 1;
     /* Step X2. Loop while v3 != 0 */
-    while (v3 != BigUnsignedIntBase10("0"))
+    while (v3 != BigUnsignedInt(_base, "0"))
     {
         /* Step X3. Divide and "Subtract" */
         auto res = u3.quotientAndMod(v3);
@@ -285,8 +315,8 @@ BigUnsignedIntBase10 BigUnsignedIntBase10::multInverse(BigUnsignedIntBase10 v)
         iter = -iter;
     }
     /* Make sure u3 = gcd(u,v) == 1 */
-    if (u3 != BigUnsignedIntBase10("1"))
-        return BigUnsignedIntBase10("0");   /* Error: No inverse exists */
+    if (u3 != BigUnsignedInt(_base, "1"))
+        return BigUnsignedInt(_base, "0");   /* Error: No inverse exists */
     /* Ensure a positive result */
     if (iter < 0)
         inv = v - u1;
@@ -295,11 +325,40 @@ BigUnsignedIntBase10 BigUnsignedIntBase10::multInverse(BigUnsignedIntBase10 v)
     return inv;
 }
 
-BigUnsignedIntBase10::size_type BigUnsignedIntBase10::countSignificantNumbers()
+bool BigUnsignedInt::isPrime() const
+{
+    size_type k = 1;
+    while (k < _digitsNumber && _digits[k] == 0)
+        ++k;
+
+    // TODO: consider this when writeing tests
+    if (k >= _digitsNumber)
+        throw invalid_argument("Degree of n-1 is invalid");
+
+    BigUnsignedInt m(_base, _digits.begin() + k, _digits.end());
+    BigUnsignedInt one(_base, "1");
+    BigUnsignedInt test = *this - one;
+
+    BigUnsignedInt t = BigUnsignedInt(_base, "10").pow(m, *this);
+
+    if (t == one || t == test)
+        return true;
+    for (size_type i = 0; i < k; ++i)
+    {
+        t = (t * t).quotientAndMod(*this).second;
+        if (t == one)
+            return false;
+        if (t == test)
+            return true;
+    }
+    return false;
+}
+
+BigUnsignedInt::size_type BigUnsignedInt::countSignificantNumbers()
 {
     size_type zeroesNumber = 0;
     size_type numberOfDigits = 0;
-    for (auto it = _digits.begin(); it != _digits.begin() + _digitsNumber; ++it)
+    for (auto it = _digits.begin(); it != _digits.end(); ++it)
     {
         if (*it == 0)
             ++zeroesNumber;
@@ -313,10 +372,10 @@ BigUnsignedIntBase10::size_type BigUnsignedIntBase10::countSignificantNumbers()
     return max(numberOfDigits, 1u);
 }
 
-std::pair<BigUnsignedIntBase10, BigUnsignedIntBase10> BigUnsignedIntBase10::quotientAndMod(Digit d) const
+std::pair<BigUnsignedInt, BigUnsignedInt> BigUnsignedInt::quotientAndMod(Digit d) const
 {
     Digit r = 0; // Reminder
-    BigUnsignedIntBase10 quotient(_digitsNumber);
+    BigUnsignedInt quotient(_base, _digitsNumber);
     for (size_type j = _digitsNumber - 1; j != numeric_limits<size_type>::max(); --j)
     {
         Digit sum = r * _base + _digits[j];
@@ -325,16 +384,16 @@ std::pair<BigUnsignedIntBase10, BigUnsignedIntBase10> BigUnsignedIntBase10::quot
     }
 
     quotient._digitsNumber = quotient.countSignificantNumbers();
-    return std::make_pair(quotient, BigUnsignedIntBase10(_base, std::to_string(r)));
+    return std::make_pair(quotient, BigUnsignedInt(_base, std::to_string(r)));
 }
 
-BigUnsignedIntBase10::BigUnsignedIntBase10(Digit base, std::string_view str) : _base(base), _max_digit(base - 1)
+BigUnsignedInt::BigUnsignedInt(Digit base, std::string_view str) : _base(base), _max_digit(base - 1)
 {
     createFromString(str, *this);
 }
 
-BigUnsignedIntBase10::BigUnsignedIntBase10(Digit base, UnsignedVector::const_iterator b,
-                                           UnsignedVector::const_iterator e)
+BigUnsignedInt::BigUnsignedInt(Digit base, UnsignedVector::const_iterator b,
+                               UnsignedVector::const_iterator e)
         : _base(base), _max_digit(base - 1)
 {
     for (auto it = b; it != e; ++it)
@@ -343,10 +402,11 @@ BigUnsignedIntBase10::BigUnsignedIntBase10(Digit base, UnsignedVector::const_ite
             throw invalid_argument("Digits in range must be less than base");
     }
     _digits = UnsignedVector(b, e);
-    _digitsNumber = size();
+    _digitsNumber = countSignificantNumbers();
+
 }
 
-std::string BigUnsignedIntBase10::to_string() const
+std::string BigUnsignedInt::to_string() const
 {
     stringstream ss;
     for (auto it = _digits.rbegin() + startIndex(); it != _digits.rend(); ++it)
@@ -354,14 +414,14 @@ std::string BigUnsignedIntBase10::to_string() const
     return ss.str();
 }
 
-void BigUnsignedIntBase10::resetToZero()
+void BigUnsignedInt::resetToZero()
 {
     for (Digit& digit:_digits)
         digit = 0;
     _digitsNumber = 1;
 }
 
-void BigUnsignedIntBase10::createFromString(string_view str, BigUnsignedIntBase10& number)
+void BigUnsignedInt::createFromString(string_view str, BigUnsignedInt& number)
 {
     using namespace std;
 
@@ -385,4 +445,4 @@ void BigUnsignedIntBase10::createFromString(string_view str, BigUnsignedIntBase1
     }
 }
 
-void BigUnsignedIntBase10::resize(size_type size) { _digits.resize(size, 0); }
+void BigUnsignedInt::resize(size_type size) { _digits.resize(size, 0); }

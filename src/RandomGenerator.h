@@ -5,10 +5,12 @@
 #ifndef BIGUNSIGNEDINTBASE10_RANDOMGENERATOR_H
 #define BIGUNSIGNEDINTBASE10_RANDOMGENERATOR_H
 
-#include "BigUnsignedIntBase10.h"
+#include "BigUnsignedInt.h"
 
 /**
- * Generates numbers from {0, 1} using linear congruent method.
+ * Generates binary numbers using linear congruent method.
+ * Generated numbers have first and last digits set to 1 to provide to
+ * guarantee that numbers are sufficiently large and could be prime.
  */
 class RandomGenerator {
 public:
@@ -25,11 +27,11 @@ public:
     RandomGenerator(Unsigned a, Unsigned c, Unsigned m, Unsigned x);
 
     /**
-     *
-     * @param size
-     * @return
+     * Generates next number of specified size.
+     * @param size - size of number in bits
+     * @return - generated number.
      */
-    BigUnsignedIntBase10 next(BigUnsignedIntBase10::size_type size);
+    BigUnsignedInt next(BigUnsignedInt::size_type size);
 
 private:
     Unsigned _a;

@@ -13,14 +13,14 @@ RandomGenerator::RandomGenerator(Unsigned a, Unsigned c, Unsigned m, Unsigned x)
         throw invalid_argument("Parameters of random generator must be less than specified module");
 }
 
-BigUnsignedIntBase10 RandomGenerator::next(BigUnsignedIntBase10::size_type size)
+BigUnsignedInt RandomGenerator::next(BigUnsignedInt::size_type size)
 {
-    using size_type = BigUnsignedIntBase10::size_type;
+    using size_type = BigUnsignedInt::size_type;
 
     if (size < 2)
         throw invalid_argument("Generated number must have at least 2 digits");
 
-    BigUnsignedIntBase10 number(size);
+    BigUnsignedInt number(2, size);
     number[0] = number[size - 1] = 1;
     for (size_type i = 1; i < size; ++i)
     {
