@@ -240,13 +240,13 @@ BigUnsignedInt::quotientAndMod(const BigUnsignedInt& other) const
         //uPart._digitsNumber = uPart.countSignificantNumbers();
         BigUnsignedInt q(_base, std::to_string(estimQuotient));
         BigUnsignedInt qv = q * v;
-        if (uPart >= qv)
-            uPart -= qv;
-        else
+        if (uPart < qv)
         {
             --estimQuotient;
-            uPart -= qv - v;
+            qv -= v;
         }
+        uPart -= qv;
+
         copy(uPart._digits.begin(), uPart._digits.end(), u._digits.begin() + j);
         fill(u._digits.begin() + j + uPart._digitsNumber, u._digits.begin() + j + n + 1, 0);
         quotient[j] = estimQuotient;
