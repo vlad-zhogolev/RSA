@@ -238,7 +238,11 @@ BigUnsignedInt::quotientAndMod(const BigUnsignedInt& other) const
         BigUnsignedInt uPart(_base, u._digits.begin() + j, u._digits.begin() + j + n + 1);
         //copy(u._digits.begin() + j, u._digits.begin() + j + n + 1, uPart._digits.begin());
         //uPart._digitsNumber = uPart.countSignificantNumbers();
-        BigUnsignedInt q(_base, std::to_string(estimQuotient));
+
+        //BigUnsignedInt q(_base, std::to_string(estimQuotient));
+        BigUnsignedInt q(_base, 1u);
+        q[0] = estimQuotient;
+
         BigUnsignedInt qv = q * v;
         if (uPart < qv)
         {
@@ -281,9 +285,13 @@ BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsign
         throw invalid_argument("Degree base must be 2");
 
     BigUnsignedInt x(*this);
-    BigUnsignedInt y(_base, "0");
+    //BigUnsignedInt y(_base, "0");
+    //BigUnsignedInt result(2, "1");
 
-    BigUnsignedInt result(2, "1");
+    BigUnsignedInt result(_base, 1u);
+    BigUnsignedInt y(result);
+    result[0] = 1;
+
     for (Digit d:degree._digits)
     {
         if (d == 1)
@@ -301,14 +309,20 @@ BigUnsignedInt BigUnsignedInt::multInverse(BigUnsignedInt v)
     BigUnsignedInt inv(_base), t1(_base), t3(_base), q(_base);
     int iter;
     /* Step X1. Initialise */
-    BigUnsignedInt u1(_base, "1");
+    BigUnsignedInt zero(_base);
+    BigUnsignedInt one(zero);
+    one[0] = 1;
+
+    BigUnsignedInt u1(one);
+    BigUnsignedInt v1(zero);
+
     BigUnsignedInt u3(*this);
-    BigUnsignedInt v1(_base, "0");
+    //BigUnsignedInt v1(_base, "0");
     BigUnsignedInt v3(v);
     /* Remember odd/even iterations */
     iter = 1;
     /* Step X2. Loop while v3 != 0 */
-    while (v3 != BigUnsignedInt(_base, "0"))
+    while (v3 != zero)
     {
         /* Step X3. Divide and "Subtract" */
         auto res = u3.quotientAndMod(v3);
@@ -323,8 +337,8 @@ BigUnsignedInt BigUnsignedInt::multInverse(BigUnsignedInt v)
         iter = -iter;
     }
     /* Make sure u3 = gcd(u,v) == 1 */
-    if (u3 != BigUnsignedInt(_base, "1"))
-        return BigUnsignedInt(_base, "0");   /* Error: No inverse exists */
+    if (u3 != one)
+        return zero;   /* Error: No inverse exists */
     /* Ensure a positive result */
     if (iter < 0)
         inv = v - u1;
