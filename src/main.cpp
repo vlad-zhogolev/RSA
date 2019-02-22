@@ -4,16 +4,18 @@
 
 using namespace std;
 
+const BigUnsignedInt::size_type SIZE = 512;//1024;
+
 int main()
 {
-    BigUnsignedInt a(10, "7");
-    BigUnsignedInt b(10, "13");
-
-    RandomGenerator rnd(859u, 2531u, 11979u, 0u);
-    BigUnsignedInt c = rnd.next(512);
-    //BigUnsignedInt a("100");
-    //BigUnsignedInt b("10");
-    std::cout << a << endl << b << endl <<  c << endl;
-    //std::cout << c;
+    RandomGenerator rnd(4081u,	25673u,	121500u, 0u);
+    BigUnsignedInt random = rnd.next(SIZE);
+    BigUnsignedInt::size_type i = 0;
+    while(!random.isPrime())
+    {
+        cout << ++i << endl;
+        random = rnd.next(SIZE);
+    }
+    cout << random << endl;
     return 0;
 }
