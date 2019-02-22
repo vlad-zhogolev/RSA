@@ -106,7 +106,7 @@ TEST(Division, Test_01)
         BigUnsignedInt b(TEN, get<1>(d));
         BigUnsignedInt q(TEN, get<2>(d));
         BigUnsignedInt r(TEN, get<3>(d));
-        auto result = a.quotientAndMod(b);
+        auto result = a.quotientAndRem(b);
         EXPECT_EQ(result.first, q);
         EXPECT_EQ(result.second, r);
     }

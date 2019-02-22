@@ -70,13 +70,13 @@ BigUnsignedInt operator*(const BigUnsignedInt& a, const BigUnsignedInt& b)
 
 BigUnsignedInt operator/(const BigUnsignedInt& a, const BigUnsignedInt& b)
 {
-    return a.quotientAndMod(b).first;
+    return a.quotientAndRem(b).first;
 }
 
 std::pair<BigUnsignedInt, BigUnsignedInt>
 quotientAndMod(const BigUnsignedInt& a, const BigUnsignedInt& b)
 {
-    return a.quotientAndMod(b);
+    return a.quotientAndRem(b);
 }
 
 bool operator<(const BigUnsignedInt& a, const BigUnsignedInt& b)
@@ -192,13 +192,13 @@ BigUnsignedInt& BigUnsignedInt::operator/=(const BigUnsignedInt& other)
 }
 
 std::pair<BigUnsignedInt, BigUnsignedInt>
-BigUnsignedInt::quotientAndMod(const BigUnsignedInt& other) const
+BigUnsignedInt::quotientAndRem(const BigUnsignedInt& other) const
 {
     if (*this < other)
         return make_pair(BigUnsignedInt(_base, "0"), *this);
 
     if (other._digitsNumber == 1)
-        return quotientAndMod(other[0]);
+        return quotientAndRem(other[0]);
 
     // Just to get short names
     size_type m = _digitsNumber - other._digitsNumber;
@@ -212,6 +212,8 @@ BigUnsignedInt::quotientAndMod(const BigUnsignedInt& other) const
     Digit d = base / (*other.startIter() + 1);
     BigUnsignedInt u = *this * BigUnsignedInt(_base, std::to_string(d));
     BigUnsignedInt v = other * BigUnsignedInt(_base, std::to_string(d));
+
+    //BigUnsignedInt uPart(_base, n); // Added this
 
     // Won't work if other has only one digit
     auto condition = [v = v[n - 2], base](Digit q, Digit r, Digit u) {
@@ -233,10 +235,13 @@ BigUnsignedInt::quotientAndMod(const BigUnsignedInt& other) const
         }
 
         BigUnsignedInt uPart(_base, u._digits.begin() + j, u._digits.begin() + j + n + 1);
+        //copy(u._digits.begin() + j, u._digits.begin() + j + n + 1, uPart._digits.begin());
+        //uPart._digitsNumber = uPart.countSignificantNumbers(); //Added this
+
         BigUnsignedInt q(_base, std::to_string(estimQuotient));
         BigUnsignedInt qv = q * v;
         if (uPart >= qv)
-            uPart -= qv;// TODO: check some bug: 25, 7
+            uPart -= qv;
         else
         {
             --estimQuotient;
@@ -251,7 +256,7 @@ BigUnsignedInt::quotientAndMod(const BigUnsignedInt& other) const
         --quotient._digitsNumber;
 
     u._digitsNumber = n;
-    return make_pair(quotient, u.quotientAndMod(d).first);
+    return make_pair(quotient, u.quotientAndRem(d).first);
 }
 
 BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree)
@@ -276,14 +281,17 @@ BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsign
         throw invalid_argument("Degree base must be 2");
 
     BigUnsignedInt x(*this);
+    BigUnsignedInt y(_base, "0");
     BigUnsignedInt result(2, "1");
-    for (Digit d:degree._digits)
+    for (size_type i = 0; i < degree._digitsNumber; ++i)
     {
-        if (d == 1)
-            result = (result * x).quotientAndMod(mod).second;
-        //x *= x;
-        //x = x.quotientAndMod(mod).second;
-        x = (x * x).quotientAndMod(mod).second;
+        if (degree._digits[i] == 1)
+        {
+            result *= x;
+            result = result.quotientAndRem(mod).second;
+        }
+        x *= x;
+        x = y.quotientAndRem(mod).second;
     }
     return result;
 }
@@ -303,7 +311,7 @@ BigUnsignedInt BigUnsignedInt::multInverse(BigUnsignedInt v)
     while (v3 != BigUnsignedInt(_base, "0"))
     {
         /* Step X3. Divide and "Subtract" */
-        auto res = u3.quotientAndMod(v3);
+        auto res = u3.quotientAndRem(v3);
         q = res.first;
         t3 = res.second;
         t1 = u1 + q * v1;
@@ -331,7 +339,7 @@ bool BigUnsignedInt::isPrime() const
     while (k < _digitsNumber && _digits[k] == 0)
         ++k;
 
-    // TODO: consider this when writeing tests
+    // TODO: consider this when writing tests
     if (k >= _digitsNumber)
         throw invalid_argument("Degree of n-1 is invalid");
 
@@ -345,7 +353,7 @@ bool BigUnsignedInt::isPrime() const
         return true;
     for (size_type i = 0; i < k; ++i)
     {
-        t = (t * t).quotientAndMod(*this).second;
+        t = (t * t).quotientAndRem(*this).second;
         if (t == one)
             return false;
         if (t == test)
@@ -372,7 +380,7 @@ BigUnsignedInt::size_type BigUnsignedInt::countSignificantNumbers()
     return max(numberOfDigits, 1u);
 }
 
-std::pair<BigUnsignedInt, BigUnsignedInt> BigUnsignedInt::quotientAndMod(Digit d) const
+std::pair<BigUnsignedInt, BigUnsignedInt> BigUnsignedInt::quotientAndRem(Digit d) const
 {
     Digit r = 0; // Reminder
     BigUnsignedInt quotient(_base, _digitsNumber);
@@ -403,7 +411,6 @@ BigUnsignedInt::BigUnsignedInt(Digit base, UnsignedVector::const_iterator b,
     }
     _digits = UnsignedVector(b, e);
     _digitsNumber = countSignificantNumbers();
-
 }
 
 std::string BigUnsignedInt::to_string() const
@@ -431,17 +438,18 @@ void BigUnsignedInt::createFromString(string_view str, BigUnsignedInt& number)
         throw invalid_argument("provided input isn't unsigned integer");
 
     number._digits = UnsignedVector(str.size());
-    number._digitsNumber = str.size();
     // Fill dividend with digits of provided number
     transform(str.rbegin(), str.rend(), number._digits.begin(), [](string::value_type letter) {
         return static_cast<Digit>(letter - '0');
     });
+    number._digitsNumber = number.countSignificantNumbers();
 
     //TODO: make check before or during transformation
     for (auto it = number._digits.begin(); it != number._digits.end(); ++it)
     {
         if (*it >= number._base)
             throw invalid_argument("Digits in string must be less than base");
+
     }
 }
 

@@ -11,6 +11,11 @@ RandomGenerator::RandomGenerator(Unsigned a, Unsigned c, Unsigned m, Unsigned x)
 {
     if (a >= m || c >= m || x >= m)
         throw invalid_argument("Parameters of random generator must be less than specified module");
+    _a = a;
+    _c = c;
+    _m = m;
+    _x0 = x;
+    _cur = 0u;
 }
 
 BigUnsignedInt RandomGenerator::next(BigUnsignedInt::size_type size)
@@ -22,7 +27,7 @@ BigUnsignedInt RandomGenerator::next(BigUnsignedInt::size_type size)
 
     BigUnsignedInt number(2, size);
     number[0] = number[size - 1] = 1;
-    for (size_type i = 1; i < size; ++i)
+    for (size_type i = 1; i < size - 1; ++i)
     {
         _cur = (_a * _cur + _c) % _m;
         number[i] = _cur < _m / 2 ? 0 : 1;

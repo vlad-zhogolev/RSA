@@ -212,7 +212,7 @@ public:
      * @return - pair (quotient, reminder), where quotient is reference to *this object
      * and reminder is ordinary BigUnsignedInt.
      */
-    std::pair<BigUnsignedInt, BigUnsignedInt> quotientAndMod(const BigUnsignedInt& other) const;
+    std::pair<BigUnsignedInt, BigUnsignedInt> quotientAndRem(const BigUnsignedInt& other) const;
 
     /**
      *
@@ -283,7 +283,7 @@ private:
      * @param d - digit to divide on.
      * @return - pair (quotient, reminder)
      */
-    std::pair<BigUnsignedInt, BigUnsignedInt> quotientAndMod(Digit d) const;
+    std::pair<BigUnsignedInt, BigUnsignedInt> quotientAndRem(Digit d) const;
 
     /**
      * \breif Resizes number so it can store specified number of digits
