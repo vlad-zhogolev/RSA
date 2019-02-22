@@ -210,8 +210,10 @@ BigUnsignedInt::quotientAndMod(const BigUnsignedInt& other) const
 
     // Normalization
     Digit d = base / (*other.startIter() + 1);
-    BigUnsignedInt u = *this * BigUnsignedInt(_base, std::to_string(d));
-    BigUnsignedInt v = other * BigUnsignedInt(_base, std::to_string(d));
+    BigUnsignedInt bigD(_base, std::to_string(d));
+    BigUnsignedInt u = *this * bigD;
+    BigUnsignedInt v = other * bigD;
+    //BigUnsignedInt uPart(_base, n);
 
     // Won't work if other has only one digit
     auto condition = [v = v[n - 2], base](Digit q, Digit r, Digit u) {
@@ -228,15 +230,18 @@ BigUnsignedInt::quotientAndMod(const BigUnsignedInt& other) const
         {
             --estimQuotient;
             estimReminder += v[n - 1];
+            // Add test for this in division
             if (condition(estimQuotient, estimReminder, u[j + n - 2]))
                 --estimQuotient;
         }
 
         BigUnsignedInt uPart(_base, u._digits.begin() + j, u._digits.begin() + j + n + 1);
+        //copy(u._digits.begin() + j, u._digits.begin() + j + n + 1, uPart._digits.begin());
+        //uPart._digitsNumber = uPart.countSignificantNumbers();
         BigUnsignedInt q(_base, std::to_string(estimQuotient));
         BigUnsignedInt qv = q * v;
         if (uPart >= qv)
-            uPart -= qv;// TODO: check some bug: 25, 7
+            uPart -= qv;
         else
         {
             --estimQuotient;
@@ -276,6 +281,8 @@ BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsign
         throw invalid_argument("Degree base must be 2");
 
     BigUnsignedInt x(*this);
+    BigUnsignedInt y(_base, "0");
+
     BigUnsignedInt result(2, "1");
     for (Digit d:degree._digits)
     {
@@ -283,7 +290,8 @@ BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsign
             result = (result * x).quotientAndMod(mod).second;
         //x *= x;
         //x = x.quotientAndMod(mod).second;
-        x = (x * x).quotientAndMod(mod).second;
+        y = x * x;
+        x = y.quotientAndMod(mod).second;
     }
     return result;
 }
