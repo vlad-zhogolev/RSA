@@ -8,7 +8,6 @@ using fourStrings = vector<tuple<string, string, string, string>>;
 using twoStringsOneBool = vector<tuple<string, string, bool>>;
 using oneStringOneBool = vector<tuple<string, bool>>;
 
-const BigUnsignedInt::Digit TEN = 10;
 const BigUnsignedInt::Digit TWO = 2;
 
 threeStrings addTestData{
@@ -257,19 +256,19 @@ TEST(Division, Test_01)
 }
 
 threeStrings multInverseTestData{
-        {"7", "13",    "2"},
-        {"3", "107",   "36"},
-        {"3", "10117", "6745"}
+        {"111", "1101",           "10"},
+        {"11",  "1101011",        "100100"},
+        {"11",  "10011110000101", "1101001011001"}
 };
 
 TEST(MultInverse, Test_01)
 {
     for (const auto& d:multInverseTestData)
     {
-        BigUnsignedInt a(TEN, get<0>(d));
-        BigUnsignedInt module(TEN, get<1>(d));
+        BigUnsignedInt a(TWO, get<0>(d));
+        BigUnsignedInt module(TWO, get<1>(d));
         BigUnsignedInt multInverse = a.multInverse(module);
-        BigUnsignedInt expected(TEN, get<2>(d));
+        BigUnsignedInt expected(TWO, get<2>(d));
         EXPECT_EQ(multInverse, expected);
     }
 }
@@ -319,20 +318,39 @@ TEST(ModularPow, Test_01)
 
 // Third element holds 'true' if first is less than second and 'false' otherwise.
 twoStringsOneBool lessComparisonTestData{
-        {"0",                                  "0",                 false},
-        {"1",                                  "0",                 false},
-        {"0",                                  "1",                 true},
-        {"100",                                "1",                 false},
-        {"1",                                  "100",               true},
-        {"1809656495068950591261389240759754", "19798691543539378", false}
+        {
+                "0",
+                "0",
+
+                false
+        },
+        {       "1",
+                "0",
+                false
+        },
+        {       "0",
+                "1",
+                true
+        },
+        {       "1100100",
+                "1",
+                false
+        },
+        {       "1",
+                "1100100",
+                true
+        },
+        {       "101100100111001000100111000000000011010000010001111110100011000110011000011001100110001101100010111010111001010",
+                "1000110010101101100111000011000011110000101111010110010",
+                false}
 };
 
 TEST(LessComparison, Test_01)
 {
     for (const auto& d:lessComparisonTestData)
     {
-        BigUnsignedInt a(TEN, get<0>(d));
-        BigUnsignedInt b(TEN, get<1>(d));
+        BigUnsignedInt a(TWO, get<0>(d));
+        BigUnsignedInt b(TWO, get<1>(d));
         EXPECT_EQ(a < b, get<2>(d));
     }
 }
@@ -341,8 +359,8 @@ TEST(GreaterComparison, Test_01)
 {
     for (const auto& d:lessComparisonTestData)
     {
-        BigUnsignedInt a(TEN, get<0>(d));
-        BigUnsignedInt b(TEN, get<1>(d));
+        BigUnsignedInt a(TWO, get<0>(d));
+        BigUnsignedInt b(TWO, get<1>(d));
         EXPECT_EQ(b > a, get<2>(d));
     }
 }
@@ -351,8 +369,8 @@ TEST(LessOrEqualComparison, Test_01)
 {
     for (const auto& d:lessComparisonTestData)
     {
-        BigUnsignedInt a(TEN, get<0>(d));
-        BigUnsignedInt b(TEN, get<1>(d));
+        BigUnsignedInt a(TWO, get<0>(d));
+        BigUnsignedInt b(TWO, get<1>(d));
         EXPECT_EQ(b <= a, !get<2>(d));
     }
 }
@@ -361,8 +379,8 @@ TEST(GreaterOrEqualComparison, Test_01)
 {
     for (const auto& d:lessComparisonTestData)
     {
-        BigUnsignedInt a(TEN, get<0>(d));
-        BigUnsignedInt b(TEN, get<1>(d));
+        BigUnsignedInt a(TWO, get<0>(d));
+        BigUnsignedInt b(TWO, get<1>(d));
         EXPECT_EQ(a >= b, !get<2>(d));
     }
 }
