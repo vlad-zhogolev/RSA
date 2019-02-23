@@ -344,30 +344,28 @@ BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree) const
     return result;
 }
 
-BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsignedInt& mod) const
+BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsignedInt& module) const
 {
     if (degree._base != 2)
         throw invalid_argument("Degree base must be 2");
 
     BigUnsignedInt x(*this);
-    //BigUnsignedInt y(_base, "0");
-    //BigUnsignedInt result(2, "1");
-
-    BigUnsignedInt result(1u);
-    BigUnsignedInt y(result);
-    result[0] = 1;
+    BigUnsignedInt result(one);
 
     for (Digit d:degree._digits)
     {
         if (d == 1)
-            result = (result * x).quotientAndRem(mod).second;
-        y = x * x;
-        x = y.quotientAndRem(mod).second;
+        {
+            result = result * x;
+            result %= module;
+        }
+        x = x * x;
+        x %= module;
     }
     return result;
 }
 
-BigUnsignedInt BigUnsignedInt::multInverse(BigUnsignedInt v)
+BigUnsignedInt BigUnsignedInt::multInverse(const BigUnsignedInt& v)
 {
     BigUnsignedInt inv(_base), t1(_base), t3(_base), q(_base);
     int iter;

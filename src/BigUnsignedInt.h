@@ -232,17 +232,17 @@ public:
     /**
      *
      * @param degree
-     * @param mod
+     * @param module
      * @return
      */
-    BigUnsignedInt pow(const BigUnsignedInt& degree, const BigUnsignedInt& mod) const;
+    BigUnsignedInt pow(const BigUnsignedInt& degree, const BigUnsignedInt& module) const;
 
     /**
      *
      * @param a
      * @return
      */
-    BigUnsignedInt multInverse(BigUnsignedInt a);
+    BigUnsignedInt multInverse(const BigUnsignedInt& a);
 
     bool isPrime() const;
 
