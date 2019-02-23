@@ -95,7 +95,7 @@ BigUnsignedInt operator/(const BigUnsignedInt& a, const BigUnsignedInt& b);
  * @return
  */
 std::pair<BigUnsignedInt, BigUnsignedInt>
-quotientAndMod(const BigUnsignedInt& a, const BigUnsignedInt& b);
+quotientAndRem(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
 /**
  *
@@ -139,6 +139,12 @@ public:
     using size_type = UnsignedVector::size_type;
 
     ///
+    /// Constants
+    ///
+    static const Digit _base = 2u;
+    static const Digit _max_digit = _base - 1;
+
+    ///
     /// Friends
     ///
     friend std::istream& operator>>(std::istream& is, BigUnsignedInt& bigUnsignedInt);
@@ -154,31 +160,31 @@ public:
     friend BigUnsignedInt operator*(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
     friend std::pair<BigUnsignedInt, BigUnsignedInt>
-    quotientAndMod(const BigUnsignedInt& a, const BigUnsignedInt& b);
+    quotientAndRem(const BigUnsignedInt& a, const BigUnsignedInt& b);
 
 public:
 
-    ///\brief Constructs unsigned integer with zero value in specified base.
-    explicit BigUnsignedInt(Digit base) : _digits(1), _digitsNumber(1), _base(base), _max_digit(base - 1) {}
+    ///\brief Constructs unsigned integer with zero value.
+    BigUnsignedInt() : _digits(1), _digitsNumber(1) {}
 
     /**\brief Creates BigUnsignedInt object from string representation.
      * Throws same exceptions as createFromString for the same reasons.
      * @param stringRepr - string containing an unsigned number
      */
-    explicit BigUnsignedInt(Digit base, std::string_view str);
+    explicit BigUnsignedInt(std::string_view str);
 
     /**
      * \brief Creates BigUnisgnedInt object capable to hold size digits.
      * @param size - quantity of digits in this number.
      */
-    explicit BigUnsignedInt(Digit base, size_type size) : _digits(size, 0), _digitsNumber(size), _base(base),
-                                                          _max_digit(base - 1) {}
+    explicit BigUnsignedInt(size_type size) : _digits(size, 0), _digitsNumber(size) {}
+
     /**
      * Creates number from specified range.
      * @param b - iterator to the least significant digit.
      * @param e - iterator to past the most significant digit.
      */
-    BigUnsignedInt(Digit base, UnsignedVector::const_iterator b, UnsignedVector::const_iterator e);
+    BigUnsignedInt(UnsignedVector::const_iterator b, UnsignedVector::const_iterator e);
 
     /**\brief Increases this BigUnsignedInt by other.
      * @param other - BigUnsignedInt to add
@@ -314,8 +320,10 @@ private:
 private:
     UnsignedVector _digits; // Stores digit of the number in reverse order (little-endian)
     size_type _digitsNumber; // number of significant digits
-    Digit _base;
-    Digit _max_digit;
 };
+
+static const BigUnsignedInt zero;
+static const BigUnsignedInt one("1");
+static const BigUnsignedInt two("10");
 
 #endif //BIGUNSIGNEDINTEGER_BIGUNSIGNEDINT_H

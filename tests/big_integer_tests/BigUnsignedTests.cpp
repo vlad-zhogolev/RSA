@@ -58,9 +58,9 @@ TEST(Addition, Test_01)
 {
     for (const auto& d:addTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
-        BigUnsignedInt b(TWO, get<1>(d));
-        BigUnsignedInt expected(TWO, get<2>(d));
+        BigUnsignedInt a( get<0>(d));
+        BigUnsignedInt b( get<1>(d));
+        BigUnsignedInt expected( get<2>(d));
         BigUnsignedInt c = a + b;
         EXPECT_EQ(c, expected);
     }
@@ -105,9 +105,9 @@ TEST(Subtraction, Test_01)
 {
     for (const auto& d:subtractTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
-        BigUnsignedInt b(TWO, get<1>(d));
-        BigUnsignedInt expected(TWO, get<2>(d));
+        BigUnsignedInt a( get<0>(d));
+        BigUnsignedInt b(get<1>(d));
+        BigUnsignedInt expected( get<2>(d));
         BigUnsignedInt c = a - b;
         EXPECT_EQ(c, expected);
     }
@@ -161,9 +161,9 @@ TEST(Multiplication, Test_01)
 {
     for (const auto& d:multiplyTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
-        BigUnsignedInt b(TWO, get<1>(d));
-        BigUnsignedInt expected(TWO, get<2>(d));
+        BigUnsignedInt a(get<0>(d));
+        BigUnsignedInt b(get<1>(d));
+        BigUnsignedInt expected( get<2>(d));
         BigUnsignedInt c = a * b;
         EXPECT_EQ(c, expected);
     }
@@ -245,10 +245,10 @@ TEST(Division, Test_01)
 {
     for (const auto& d:divisionTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
-        BigUnsignedInt b(TWO, get<1>(d));
-        BigUnsignedInt q(TWO, get<2>(d));
-        BigUnsignedInt r(TWO, get<3>(d));
+        BigUnsignedInt a( get<0>(d));
+        BigUnsignedInt b( get<1>(d));
+        BigUnsignedInt q( get<2>(d));
+        BigUnsignedInt r( get<3>(d));
         auto result = a.quotientAndRem(b);
         EXPECT_EQ(result.first, q);
         EXPECT_EQ(result.second, r);
@@ -265,10 +265,10 @@ TEST(MultInverse, Test_01)
 {
     for (const auto& d:multInverseTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
-        BigUnsignedInt module(TWO, get<1>(d));
+        BigUnsignedInt a( get<0>(d));
+        BigUnsignedInt module( get<1>(d));
         BigUnsignedInt multInverse = a.multInverse(module);
-        BigUnsignedInt expected(TWO, get<2>(d));
+        BigUnsignedInt expected( get<2>(d));
         EXPECT_EQ(multInverse, expected);
     }
 }
@@ -286,9 +286,9 @@ TEST(Pow, Test_01)
 {
     for (const auto& d:powTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
-        BigUnsignedInt degree(TWO, get<1>(d));
-        BigUnsignedInt expected(TWO, get<2>(d));
+        BigUnsignedInt a(get<0>(d));
+        BigUnsignedInt degree( get<1>(d));
+        BigUnsignedInt expected( get<2>(d));
         EXPECT_EQ(a.pow(degree), expected);
     }
 }
@@ -308,10 +308,10 @@ TEST(ModularPow, Test_01)
 {
     for (const auto& d:modularPowTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
-        BigUnsignedInt degree(TWO, get<1>(d));
-        BigUnsignedInt module(TWO, get<2>(d));
-        BigUnsignedInt expected(TWO, get<3>(d));
+        BigUnsignedInt a( get<0>(d));
+        BigUnsignedInt degree( get<1>(d));
+        BigUnsignedInt module( get<2>(d));
+        BigUnsignedInt expected( get<3>(d));
         EXPECT_EQ(a.pow(degree, module), expected);
     }
 }
@@ -349,8 +349,8 @@ TEST(LessComparison, Test_01)
 {
     for (const auto& d:lessComparisonTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
-        BigUnsignedInt b(TWO, get<1>(d));
+        BigUnsignedInt a(get<0>(d));
+        BigUnsignedInt b(get<1>(d));
         EXPECT_EQ(a < b, get<2>(d));
     }
 }
@@ -359,8 +359,8 @@ TEST(GreaterComparison, Test_01)
 {
     for (const auto& d:lessComparisonTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
-        BigUnsignedInt b(TWO, get<1>(d));
+        BigUnsignedInt a(get<0>(d));
+        BigUnsignedInt b(get<1>(d));
         EXPECT_EQ(b > a, get<2>(d));
     }
 }
@@ -369,8 +369,8 @@ TEST(LessOrEqualComparison, Test_01)
 {
     for (const auto& d:lessComparisonTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
-        BigUnsignedInt b(TWO, get<1>(d));
+        BigUnsignedInt a(get<0>(d));
+        BigUnsignedInt b( get<1>(d));
         EXPECT_EQ(b <= a, !get<2>(d));
     }
 }
@@ -379,8 +379,8 @@ TEST(GreaterOrEqualComparison, Test_01)
 {
     for (const auto& d:lessComparisonTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
-        BigUnsignedInt b(TWO, get<1>(d));
+        BigUnsignedInt a( get<0>(d));
+        BigUnsignedInt b( get<1>(d));
         EXPECT_EQ(a >= b, !get<2>(d));
     }
 }
@@ -397,7 +397,7 @@ TEST(IsPrime, Test_01)
 {
     for (const auto& d:primarityTestData)
     {
-        BigUnsignedInt a(TWO, get<0>(d));
+        BigUnsignedInt a(get<0>(d));
         EXPECT_EQ(a.isPrime(), get<1>(d));
     }
 }
