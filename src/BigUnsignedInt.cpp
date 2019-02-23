@@ -421,7 +421,8 @@ bool BigUnsignedInt::isPrime() const
         return true;
     for (size_type i = 0; i < k; ++i)
     {
-        t = (t * t).quotientAndRem(*this).second;
+        t *= t;
+        t %= *this;
         if (t == one)
             return false;
         if (t == test)
