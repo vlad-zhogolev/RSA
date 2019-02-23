@@ -214,22 +214,22 @@ BigUnsignedInt::quotientAndRem(const BigUnsignedInt& other) const
     u._digitsNumber = size();
 
     // Won't work if other has only one digit
-    auto condition = [v = other[n - 2], _base](Digit q, Digit r, Digit u) {
+    auto condition = [v = other[n - 2]](Digit q, Digit r, Digit u) {
         return q == _base || q * v > _base * r + u;
     };
 
     for (size_type j = m; j != numeric_limits<size_type>::max(); --j)
     {
         Digit estimQuotient = u[j + n] * _base + u[j + n - 1];
-        Digit estimReminder = estimQuotient % other[n - 1];
-        estimQuotient /= other[n - 1];
+        //Digit estimReminder = estimQuotient % other[n - 1];
+        //estimQuotient /= other[n - 1];
 
-        if (condition(estimQuotient, estimReminder, u[j + n - 2]))
+        if (condition(estimQuotient, 0u /*estimReminder*/, u[j + n - 2]))
         {
             --estimQuotient;
-            estimReminder += other[n - 1];
+            //estimReminder += other[n - 1];
             // Add test for this in division
-            if (condition(estimQuotient, estimReminder, u[j + n - 2]))
+            if (condition(estimQuotient, 1u /*estimReminder*/, u[j + n - 2]))
                 --estimQuotient;
         }
 
