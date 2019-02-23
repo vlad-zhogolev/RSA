@@ -212,7 +212,7 @@ public:
      * @return - pair (quotient, reminder), where quotient is reference to *this object
      * and reminder is ordinary BigUnsignedInt.
      */
-    std::pair<BigUnsignedInt, BigUnsignedInt> quotientAndMod(const BigUnsignedInt& other) const;
+    std::pair<BigUnsignedInt, BigUnsignedInt> quotientAndRem(const BigUnsignedInt& other) const;
 
     /**
      *

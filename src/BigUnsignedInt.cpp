@@ -70,13 +70,13 @@ BigUnsignedInt operator*(const BigUnsignedInt& a, const BigUnsignedInt& b)
 
 BigUnsignedInt operator/(const BigUnsignedInt& a, const BigUnsignedInt& b)
 {
-    return a.quotientAndMod(b).first;
+    return a.quotientAndRem(b).first;
 }
 
 std::pair<BigUnsignedInt, BigUnsignedInt>
 quotientAndMod(const BigUnsignedInt& a, const BigUnsignedInt& b)
 {
-    return a.quotientAndMod(b);
+    return a.quotientAndRem(b);
 }
 
 bool operator<(const BigUnsignedInt& a, const BigUnsignedInt& b)
@@ -192,7 +192,7 @@ BigUnsignedInt& BigUnsignedInt::operator/=(const BigUnsignedInt& other)
 }
 
 std::pair<BigUnsignedInt, BigUnsignedInt>
-BigUnsignedInt::quotientAndMod(const BigUnsignedInt& other) const
+BigUnsignedInt::quotientAndRem(const BigUnsignedInt& other) const
 {
     if (*this < other)
         return make_pair(BigUnsignedInt(_base, "0"), *this);
@@ -295,11 +295,9 @@ BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsign
     for (Digit d:degree._digits)
     {
         if (d == 1)
-            result = (result * x).quotientAndMod(mod).second;
-        //x *= x;
-        //x = x.quotientAndMod(mod).second;
+            result = (result * x).quotientAndRem(mod).second;
         y = x * x;
-        x = y.quotientAndMod(mod).second;
+        x = y.quotientAndRem(mod).second;
     }
     return result;
 }
@@ -325,7 +323,7 @@ BigUnsignedInt BigUnsignedInt::multInverse(BigUnsignedInt v)
     while (v3 != zero)
     {
         /* Step X3. Divide and "Subtract" */
-        auto res = u3.quotientAndMod(v3);
+        auto res = u3.quotientAndRem(v3);
         q = res.first;
         t3 = res.second;
         t1 = u1 + q * v1;
@@ -367,7 +365,7 @@ bool BigUnsignedInt::isPrime() const
         return true;
     for (size_type i = 0; i < k; ++i)
     {
-        t = (t * t).quotientAndMod(*this).second;
+        t = (t * t).quotientAndRem(*this).second;
         if (t == one)
             return false;
         if (t == test)
