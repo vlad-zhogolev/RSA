@@ -262,7 +262,7 @@ TEST(Mod, Test_01)
         BigUnsignedInt a( get<0>(d));
         BigUnsignedInt b( get<1>(d));
         BigUnsignedInt r( get<3>(d));
-        EXPECT_EQ(a.mod(b), r);
+        EXPECT_EQ(a %= b, r);
     }
 }
 

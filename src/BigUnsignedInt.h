@@ -220,7 +220,7 @@ public:
      */
     std::pair<BigUnsignedInt, BigUnsignedInt> quotientAndRem(const BigUnsignedInt& other) const;
 
-    BigUnsignedInt& mod(const BigUnsignedInt& module);
+    BigUnsignedInt& operator%=(const BigUnsignedInt& module);
 
     /**
      *

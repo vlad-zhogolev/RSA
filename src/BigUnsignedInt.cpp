@@ -254,7 +254,7 @@ BigUnsignedInt::quotientAndRem(const BigUnsignedInt& other) const
     return make_pair(quotient, u);
 }
 
-BigUnsignedInt& BigUnsignedInt::mod(const BigUnsignedInt& module)
+BigUnsignedInt& BigUnsignedInt::operator%=(const BigUnsignedInt& module)
 {
     if (module == zero)
         throw invalid_argument("Division by zero");
