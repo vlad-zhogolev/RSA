@@ -267,6 +267,8 @@ public:
 
 private:
 
+    static void subtract(UnsignedVector::iterator b1, UnsignedVector::iterator e1,
+                         UnsignedVector::const_iterator b2, UnsignedVector::const_iterator e2);
     /**
      * \brief Resets number to zero
      */

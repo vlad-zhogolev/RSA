@@ -147,7 +147,7 @@ BigUnsignedInt& BigUnsignedInt::operator+=(const BigUnsignedInt& other)
 
 BigUnsignedInt& BigUnsignedInt::operator-=(const BigUnsignedInt& other)
 {
-    size_type length = min(_digitsNumber, other._digitsNumber);
+    /*size_type length = min(_digitsNumber, other._digitsNumber);
 
     Digit k = 1; // Tracks if we engaged from next digit (1: no engage, 0: engaged)
     std::transform(
@@ -173,7 +173,10 @@ BigUnsignedInt& BigUnsignedInt::operator-=(const BigUnsignedInt& other)
             k = 1;
         }
         ++it;
-    }
+    }*/
+
+    subtract(_digits.begin(), _digits.begin() + _digitsNumber,
+             other._digits.begin(), other._digits.begin() + other._digitsNumber);
 
     // Set appropriate _digitNumber
     _digitsNumber = countSignificantDigits();
@@ -494,6 +497,36 @@ void BigUnsignedInt::resetToZero()
     for (Digit& digit:_digits)
         digit = 0;
     _digitsNumber = 1;
+}
+
+void BigUnsignedInt::subtract(UnsignedVector::iterator b1, UnsignedVector::iterator e1,
+                              UnsignedVector::const_iterator b2, UnsignedVector::const_iterator e2)
+{
+    
+    size_type length = min(e1 - b1, e2 - b2);
+
+    Digit k = 1;
+    std::transform(b1, b1 + length, b2, b1, [&k](Digit a, Digit b) {
+        // We always perform an engage from next digit.
+        a += _max_digit - b + k;
+        // Check if engage was necessary (a is in [0, _base) ) and set appropriate k
+        k = a < _base ? 0 : 1;
+        return a < _base ? a : a - _base;
+    });
+
+    auto it = b1 + length;
+    // Engage while necessary
+    while (k == 0)
+    {
+        if (*it == 0)
+            *it = _max_digit;
+        else
+        {
+            --(*it);
+            k = 1;
+        }
+        ++it;
+    }
 }
 
 void BigUnsignedInt::createFromString(string_view str, BigUnsignedInt& number)
