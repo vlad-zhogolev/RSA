@@ -367,7 +367,8 @@ BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsign
 
 BigUnsignedInt BigUnsignedInt::multInverse(const BigUnsignedInt& v)
 {
-    BigUnsignedInt inv(_base), t1(_base), t3(_base), q(_base);
+    BigUnsignedInt inv;
+    BigUnsignedInt t1;
     int iter;
     /* Step X1. Initialise */
     BigUnsignedInt u1(one);
@@ -383,14 +384,12 @@ BigUnsignedInt BigUnsignedInt::multInverse(const BigUnsignedInt& v)
     {
         /* Step X3. Divide and "Subtract" */
         auto res = u3.quotientAndRem(v3);
-        q = res.first;
-        t3 = res.second;
-        t1 = u1 + q * v1;
+        t1 = u1 + res.first * v1;
         /* Swap */
         u1 = v1;
         v1 = t1;
         u3 = v3;
-        v3 = t3;
+        v3 = res.second;
         iter = -iter;
     }
     /* Make sure u3 = gcd(u,v) == 1 */
@@ -398,10 +397,9 @@ BigUnsignedInt BigUnsignedInt::multInverse(const BigUnsignedInt& v)
         return zero;   /* Error: No inverse exists */
     /* Ensure a positive result */
     if (iter < 0)
-        inv = v - u1;
+        return v - u1;
     else
-        inv = u1;
-    return inv;
+        return u1;
 }
 
 bool BigUnsignedInt::isPrime() const
