@@ -60,7 +60,7 @@ BigUnsignedInt operator*(const BigUnsignedInt& a, const BigUnsignedInt& b)
         result._digits[j + a._digitsNumber] = k;
     }
 
-    result._digitsNumber = result.countSignificantNumbers();
+    result._digitsNumber = result.countSignificantDigits();
 
     /*if (result._digits[result._digitsNumber - 1] == 0)
         --result._digitsNumber;
@@ -176,7 +176,7 @@ BigUnsignedInt& BigUnsignedInt::operator-=(const BigUnsignedInt& other)
     }
 
     // Set appropriate _digitNumber
-    _digitsNumber = countSignificantNumbers();
+    _digitsNumber = countSignificantDigits();
 
     return *this;
 }
@@ -194,63 +194,54 @@ BigUnsignedInt& BigUnsignedInt::operator/=(const BigUnsignedInt& other)
 std::pair<BigUnsignedInt, BigUnsignedInt>
 BigUnsignedInt::quotientAndRem(const BigUnsignedInt& other) const
 {
-    if (*this < other)
-        return make_pair(BigUnsignedInt("0"), *this);
+    if (other == zero)
+        throw invalid_argument("Division by zero");
 
-    if (other._digitsNumber == 1)
-        return quotientAndRem(other[0]);
+    if (other == one)
+        return make_pair(*this, zero);
+
+    if (*this < other)
+        return make_pair(zero, *this);
 
     // Just to get short names
     size_type m = _digitsNumber - other._digitsNumber;
     size_type n = other._digitsNumber;
-    const Digit base = _base;
 
     BigUnsignedInt quotient(m + 1);
-    BigUnsignedInt reminder(n);
 
-    // Normalization
-    Digit d = base / (*other.startIter() + 1);
-    BigUnsignedInt bigD(std::to_string(d));
-    BigUnsignedInt u = *this * bigD;
-    BigUnsignedInt v = other * bigD;
-    //BigUnsignedInt uPart(_base, n);
-
-    //BigUnsignedInt uPart(_base, n); // Added this
+    BigUnsignedInt u(size() + 1u);
+    copy(_digits.begin(), _digits.end(), u._digits.begin());
+    u._digitsNumber = size();
 
     // Won't work if other has only one digit
-    auto condition = [v = v[n - 2], base](Digit q, Digit r, Digit u) {
-        return q == base || q * v > base * r + u;
+    auto condition = [v = other[n - 2], _base](Digit q, Digit r, Digit u) {
+        return q == _base || q * v > _base * r + u;
     };
-
-    map<Digit, BigUnsignedInt> qv;
 
     for (size_type j = m; j != numeric_limits<size_type>::max(); --j)
     {
-        Digit estimQuotient = u[j + n] * base + u[j + n - 1];
-        Digit estimReminder = estimQuotient % v[n - 1];
-        estimQuotient /= v[n - 1];
+        Digit estimQuotient = u[j + n] * _base + u[j + n - 1];
+        Digit estimReminder = estimQuotient % other[n - 1];
+        estimQuotient /= other[n - 1];
 
         if (condition(estimQuotient, estimReminder, u[j + n - 2]))
         {
             --estimQuotient;
-            estimReminder += v[n - 1];
+            estimReminder += other[n - 1];
             // Add test for this in division
             if (condition(estimQuotient, estimReminder, u[j + n - 2]))
                 --estimQuotient;
         }
 
         BigUnsignedInt uPart(u._digits.begin() + j, u._digits.begin() + j + n + 1);
-        //copy(u._digits.begin() + j, u._digits.begin() + j + n + 1, uPart._digits.begin());
-        //uPart._digitsNumber = uPart.countSignificantNumbers();
-        //BigUnsignedInt q(_base, std::to_string(estimQuotient));
         BigUnsignedInt q(1u);
         q[0] = estimQuotient;
 
-        BigUnsignedInt qv = q * v;
+        BigUnsignedInt qv = q * other;
         if (uPart < qv)
         {
             --estimQuotient;
-            qv -= v;
+            qv -= other;
         }
         uPart -= qv;
 
@@ -262,11 +253,11 @@ BigUnsignedInt::quotientAndRem(const BigUnsignedInt& other) const
     if (quotient[quotient._digitsNumber - 1] == 0 && quotient._digitsNumber > 1)
         --quotient._digitsNumber;
 
-    u._digitsNumber = n;
-    return make_pair(quotient, u.quotientAndRem(d).first);
+    u._digitsNumber = u.countSignificantDigits();
+    return make_pair(quotient, u);
 }
 
-BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree)
+BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree) const
 {
     if (degree._base != 2)
         throw invalid_argument("Degree base must be 2");
@@ -282,7 +273,7 @@ BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree)
     return result;
 }
 
-BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsignedInt& mod)
+BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsignedInt& mod) const
 {
     if (degree._base != 2)
         throw invalid_argument("Degree base must be 2");
@@ -310,10 +301,6 @@ BigUnsignedInt BigUnsignedInt::multInverse(BigUnsignedInt v)
     BigUnsignedInt inv(_base), t1(_base), t3(_base), q(_base);
     int iter;
     /* Step X1. Initialise */
-    BigUnsignedInt zero;
-    BigUnsignedInt one(zero);
-    one[0] = 1;
-
     BigUnsignedInt u1(one);
     BigUnsignedInt v1(zero);
 
@@ -359,10 +346,9 @@ bool BigUnsignedInt::isPrime() const
         throw invalid_argument("Degree of n-1 is invalid");
 
     BigUnsignedInt m(_digits.begin() + k, _digits.end());
-    BigUnsignedInt one("1");
     BigUnsignedInt test = *this - one;
 
-    BigUnsignedInt t = BigUnsignedInt("10").pow(m, *this);
+    BigUnsignedInt t = two.pow(m, *this);
 
     if (t == one || t == test)
         return true;
@@ -377,7 +363,7 @@ bool BigUnsignedInt::isPrime() const
     return false;
 }
 
-BigUnsignedInt::size_type BigUnsignedInt::countSignificantNumbers()
+BigUnsignedInt::size_type BigUnsignedInt::countSignificantDigits()
 {
     size_type zeroesNumber = 0;
     size_type numberOfDigits = 0;
@@ -406,7 +392,7 @@ std::pair<BigUnsignedInt, BigUnsignedInt> BigUnsignedInt::quotientAndRem(Digit d
         quotient[j] = sum / d;
     }
 
-    quotient._digitsNumber = quotient.countSignificantNumbers();
+    quotient._digitsNumber = quotient.countSignificantDigits();
     return std::make_pair(quotient, BigUnsignedInt(std::to_string(r)));
 }
 
@@ -424,7 +410,7 @@ BigUnsignedInt::BigUnsignedInt(UnsignedVector::const_iterator b,
             throw invalid_argument("Digits in range must be less than base");
     }
     _digits = UnsignedVector(b, e);
-    _digitsNumber = countSignificantNumbers();
+    _digitsNumber = countSignificantDigits();
 }
 
 std::string BigUnsignedInt::to_string() const
@@ -456,7 +442,7 @@ void BigUnsignedInt::createFromString(string_view str, BigUnsignedInt& number)
     transform(str.rbegin(), str.rend(), number._digits.begin(), [](string::value_type letter) {
         return static_cast<Digit>(letter - '0');
     });
-    number._digitsNumber = number.countSignificantNumbers();
+    number._digitsNumber = number.countSignificantDigits();
 
     //TODO: make check before or during transformation
     for (auto it = number._digits.begin(); it != number._digits.end(); ++it)

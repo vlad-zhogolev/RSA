@@ -4,11 +4,11 @@
 
 using namespace std;
 
-const BigUnsignedInt::size_type SIZE = 256;//1024;
+const BigUnsignedInt::size_type SIZE = 512;//1024;
 
 int main()
 {
-    RandomGenerator rnd(4081u,	25673u,	121500u, 1u);
+    RandomGenerator rnd(4081u,	25673u,	121500u, 0u);
     BigUnsignedInt random = rnd.next(SIZE);
     BigUnsignedInt::size_type i = 0;
     while(!random.isPrime())

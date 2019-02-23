@@ -225,7 +225,7 @@ public:
      * @param degree
      * @return
      */
-    BigUnsignedInt pow(const BigUnsignedInt& degree);
+    BigUnsignedInt pow(const BigUnsignedInt& degree) const;
 
     /**
      *
@@ -233,7 +233,7 @@ public:
      * @param mod
      * @return
      */
-    BigUnsignedInt pow(const BigUnsignedInt& degree, const BigUnsignedInt& mod);
+    BigUnsignedInt pow(const BigUnsignedInt& degree, const BigUnsignedInt& mod) const;
 
     /**
      *
@@ -282,7 +282,7 @@ private:
     /**
      * Sets the _digitsNumber with appropriate number.
      */
-    size_type countSignificantNumbers();
+    size_type countSignificantDigits();
 
     /**
      * Performs division of *this on digit d.
