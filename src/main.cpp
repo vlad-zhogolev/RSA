@@ -4,7 +4,7 @@
 
 using namespace std;
 
-const BigUnsignedInt::size_type SIZE = 512;//1024;
+const BigUnsignedInt::size_type SIZE = 12;//1024;
 
 int main()
 {

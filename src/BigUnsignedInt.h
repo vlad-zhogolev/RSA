@@ -134,7 +134,7 @@ public:
     ///
     /// Type aliases
     ///
-    using Digit = unsigned int;
+    using Digit = unsigned char;
     using UnsignedVector = std::vector<Digit>;
     using size_type = UnsignedVector::size_type;
 

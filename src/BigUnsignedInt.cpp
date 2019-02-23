@@ -19,7 +19,7 @@ std::ostream& operator<<(std::ostream& os, const BigUnsignedInt& number)
 {
     for (auto it = number._digits.rbegin() + number.startIndex();
          it != number._digits.rend(); ++it)
-        os << *it;
+        os << static_cast<unsigned char>(*it + '0');
     return os;
 }
 
@@ -221,6 +221,8 @@ BigUnsignedInt::quotientAndRem(const BigUnsignedInt& other) const
     auto condition = [v = v[n - 2], base](Digit q, Digit r, Digit u) {
         return q == base || q * v > base * r + u;
     };
+
+    map<Digit, BigUnsignedInt> qv;
 
     for (size_type j = m; j != numeric_limits<size_type>::max(); --j)
     {
