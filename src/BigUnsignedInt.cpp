@@ -334,7 +334,7 @@ BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree) const
         throw invalid_argument("Degree base must be 2");
 
     BigUnsignedInt x(*this);
-    BigUnsignedInt result("1");
+    BigUnsignedInt result(one);
     for (Digit d:degree._digits)
     {
         if (d == 1)
