@@ -255,6 +255,17 @@ TEST(Division, Test_01)
     }
 }
 
+TEST(Mod, Test_01)
+{
+    for (const auto& d:divisionTestData)
+    {
+        BigUnsignedInt a( get<0>(d));
+        BigUnsignedInt b( get<1>(d));
+        BigUnsignedInt r( get<3>(d));
+        EXPECT_EQ(a.mod(b), r);
+    }
+}
+
 threeStrings multInverseTestData{
         {"111", "1101",           "10"},
         {"11",  "1101011",        "100100"},

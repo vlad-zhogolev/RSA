@@ -221,13 +221,10 @@ BigUnsignedInt::quotientAndRem(const BigUnsignedInt& other) const
     for (size_type j = m; j != numeric_limits<size_type>::max(); --j)
     {
         Digit estimQuotient = u[j + n] * _base + u[j + n - 1];
-        //Digit estimReminder = estimQuotient % other[n - 1];
-        //estimQuotient /= other[n - 1];
 
         if (condition(estimQuotient, 0u /*estimReminder*/, u[j + n - 2]))
         {
             --estimQuotient;
-            //estimReminder += other[n - 1];
             // Add test for this in division
             if (condition(estimQuotient, 1u /*estimReminder*/, u[j + n - 2]))
                 --estimQuotient;
@@ -255,6 +252,80 @@ BigUnsignedInt::quotientAndRem(const BigUnsignedInt& other) const
 
     u._digitsNumber = u.countSignificantDigits();
     return make_pair(quotient, u);
+}
+
+BigUnsignedInt& BigUnsignedInt::mod(const BigUnsignedInt& module)
+{
+    if (module == zero)
+        throw invalid_argument("Division by zero");
+
+    // TODO: decide how to manage case when module is 1
+    /*if (module == one)
+        return zero;*/
+
+    if (*this < module)
+        return *this;
+
+    // Just to get short names
+    size_type m = _digitsNumber - module._digitsNumber;
+    size_type n = module._digitsNumber;
+
+    // Won't work if other has only one digit
+    auto condition = [v = module[n - 2]](Digit q, Digit r, Digit u) {
+        return q == _base || q * v > _base * r + u;
+    };
+
+    // First iteration performed as if there is additional digit
+    // Additional digit is actually zero
+    Digit estimQuotientFirst = _digits[m + n - 1];
+
+    if (condition(estimQuotientFirst, 0u /*estimReminder*/, _digits[m + n - 2]))
+    {
+        --estimQuotientFirst;
+        // Add test for this in division
+        if (condition(estimQuotientFirst, 1u /*estimReminder*/, _digits[m + n - 2]))
+            --estimQuotientFirst;
+    }
+
+    // Copy will take one less digit
+    BigUnsignedInt uPartFirst(_digits.begin() + m, _digits.begin() + m + n);
+    BigUnsignedInt qFirst(1u);
+    qFirst[0] = estimQuotientFirst;
+
+    BigUnsignedInt qvFirst = qFirst * module;
+    if (uPartFirst < qvFirst)
+        qvFirst -= module;
+    uPartFirst -= qvFirst;
+
+    copy(uPartFirst._digits.begin(), uPartFirst._digits.end(), _digits.begin() + m);
+    fill(_digits.begin() + m + uPartFirst._digitsNumber, _digits.begin() + m + n, 0);
+    for (size_type j = m - 1; j != numeric_limits<size_type>::max(); --j)
+    {
+        Digit estimQuotient = _digits[j + n] * _base + _digits[j + n - 1];
+
+        if (condition(estimQuotient, 0u /*estimReminder*/, _digits[j + n - 2]))
+        {
+            --estimQuotient;
+            // Add test for this in division
+            if (condition(estimQuotient, 1u /*estimReminder*/, _digits[j + n - 2]))
+                --estimQuotient;
+        }
+
+        BigUnsignedInt uPart(_digits.begin() + j, _digits.begin() + j + n + 1);
+        BigUnsignedInt q(1u);
+        q[0] = estimQuotient;
+
+        BigUnsignedInt qv = q * module;
+        if (uPart < qv)
+            qv -= module;
+        uPart -= qv;
+
+        copy(uPart._digits.begin(), uPart._digits.end(), _digits.begin() + j);
+        fill(_digits.begin() + j + uPart._digitsNumber, _digits.begin() + j + n + 1, 0);
+    }
+
+    _digitsNumber = countSignificantDigits();
+    return *this;
 }
 
 BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree) const

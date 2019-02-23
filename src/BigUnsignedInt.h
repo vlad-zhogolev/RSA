@@ -220,6 +220,8 @@ public:
      */
     std::pair<BigUnsignedInt, BigUnsignedInt> quotientAndRem(const BigUnsignedInt& other) const;
 
+    BigUnsignedInt& mod(const BigUnsignedInt& module);
+
     /**
      *
      * @param degree
