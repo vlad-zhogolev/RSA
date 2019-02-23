@@ -210,8 +210,10 @@ BigUnsignedInt::quotientAndRem(const BigUnsignedInt& other) const
 
     // Normalization
     Digit d = base / (*other.startIter() + 1);
-    BigUnsignedInt u = *this * BigUnsignedInt(_base, std::to_string(d));
-    BigUnsignedInt v = other * BigUnsignedInt(_base, std::to_string(d));
+    BigUnsignedInt bigD(_base, std::to_string(d));
+    BigUnsignedInt u = *this * bigD;
+    BigUnsignedInt v = other * bigD;
+    //BigUnsignedInt uPart(_base, n);
 
     //BigUnsignedInt uPart(_base, n); // Added this
 
@@ -230,23 +232,26 @@ BigUnsignedInt::quotientAndRem(const BigUnsignedInt& other) const
         {
             --estimQuotient;
             estimReminder += v[n - 1];
+            // Add test for this in division
             if (condition(estimQuotient, estimReminder, u[j + n - 2]))
                 --estimQuotient;
         }
 
         BigUnsignedInt uPart(_base, u._digits.begin() + j, u._digits.begin() + j + n + 1);
         //copy(u._digits.begin() + j, u._digits.begin() + j + n + 1, uPart._digits.begin());
-        //uPart._digitsNumber = uPart.countSignificantNumbers(); //Added this
+        //uPart._digitsNumber = uPart.countSignificantNumbers();
+        //BigUnsignedInt q(_base, std::to_string(estimQuotient));
+        BigUnsignedInt q(_base, 1u);
+        q[0] = estimQuotient;
 
-        BigUnsignedInt q(_base, std::to_string(estimQuotient));
         BigUnsignedInt qv = q * v;
-        if (uPart >= qv)
-            uPart -= qv;
-        else
+        if (uPart < qv)
         {
             --estimQuotient;
-            uPart -= qv - v;
+            qv -= v;
         }
+        uPart -= qv;
+
         copy(uPart._digits.begin(), uPart._digits.end(), u._digits.begin() + j);
         fill(u._digits.begin() + j + uPart._digitsNumber, u._digits.begin() + j + n + 1, 0);
         quotient[j] = estimQuotient;
@@ -281,16 +286,18 @@ BigUnsignedInt BigUnsignedInt::pow(const BigUnsignedInt& degree, const BigUnsign
         throw invalid_argument("Degree base must be 2");
 
     BigUnsignedInt x(*this);
-    BigUnsignedInt y(_base, "0");
-    BigUnsignedInt result(2, "1");
-    for (size_type i = 0; i < degree._digitsNumber; ++i)
+    //BigUnsignedInt y(_base, "0");
+    //BigUnsignedInt result(2, "1");
+
+    BigUnsignedInt result(_base, 1u);
+    BigUnsignedInt y(result);
+    result[0] = 1;
+
+    for (Digit d:degree._digits)
     {
-        if (degree._digits[i] == 1)
-        {
-            result *= x;
-            result = result.quotientAndRem(mod).second;
-        }
-        x *= x;
+        if (d == 1)
+            result = (result * x).quotientAndRem(mod).second;
+        y = x * x;
         x = y.quotientAndRem(mod).second;
     }
     return result;
@@ -301,14 +308,20 @@ BigUnsignedInt BigUnsignedInt::multInverse(BigUnsignedInt v)
     BigUnsignedInt inv(_base), t1(_base), t3(_base), q(_base);
     int iter;
     /* Step X1. Initialise */
-    BigUnsignedInt u1(_base, "1");
+    BigUnsignedInt zero(_base);
+    BigUnsignedInt one(zero);
+    one[0] = 1;
+
+    BigUnsignedInt u1(one);
+    BigUnsignedInt v1(zero);
+
     BigUnsignedInt u3(*this);
-    BigUnsignedInt v1(_base, "0");
+    //BigUnsignedInt v1(_base, "0");
     BigUnsignedInt v3(v);
     /* Remember odd/even iterations */
     iter = 1;
     /* Step X2. Loop while v3 != 0 */
-    while (v3 != BigUnsignedInt(_base, "0"))
+    while (v3 != zero)
     {
         /* Step X3. Divide and "Subtract" */
         auto res = u3.quotientAndRem(v3);
@@ -323,8 +336,8 @@ BigUnsignedInt BigUnsignedInt::multInverse(BigUnsignedInt v)
         iter = -iter;
     }
     /* Make sure u3 = gcd(u,v) == 1 */
-    if (u3 != BigUnsignedInt(_base, "1"))
-        return BigUnsignedInt(_base, "0");   /* Error: No inverse exists */
+    if (u3 != one)
+        return zero;   /* Error: No inverse exists */
     /* Ensure a positive result */
     if (iter < 0)
         inv = v - u1;

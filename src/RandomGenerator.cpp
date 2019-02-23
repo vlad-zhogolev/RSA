@@ -15,7 +15,7 @@ RandomGenerator::RandomGenerator(Unsigned a, Unsigned c, Unsigned m, Unsigned x)
     _c = c;
     _m = m;
     _x0 = x;
-    _cur = 0u;
+    _cur = x;
 }
 
 BigUnsignedInt RandomGenerator::next(BigUnsignedInt::size_type size)

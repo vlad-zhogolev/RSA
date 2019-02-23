@@ -159,7 +159,7 @@ public:
 public:
 
     ///\brief Constructs unsigned integer with zero value in specified base.
-    explicit BigUnsignedInt(Digit base) : _digits(0), _digitsNumber(1), _base(base), _max_digit(base - 1) {}
+    explicit BigUnsignedInt(Digit base) : _digits(1), _digitsNumber(1), _base(base), _max_digit(base - 1) {}
 
     /**\brief Creates BigUnsignedInt object from string representation.
      * Throws same exceptions as createFromString for the same reasons.
