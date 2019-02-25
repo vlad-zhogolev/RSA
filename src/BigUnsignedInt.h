@@ -267,6 +267,13 @@ public:
 
 private:
 
+    /**
+     * Perfroms subtraction of second range from first. First range number must be greater than second.s
+     * @param b1
+     * @param e1
+     * @param b2
+     * @param e2
+     */
     static void subtract(UnsignedVector::iterator b1, UnsignedVector::iterator e1,
                          UnsignedVector::const_iterator b2, UnsignedVector::const_iterator e2);
     /**

@@ -462,8 +462,8 @@ std::pair<BigUnsignedInt, BigUnsignedInt> BigUnsignedInt::quotientAndRem(Digit d
         r = sum % d;
         quotient[j] = sum / d;
     }
-
     quotient._digitsNumber = quotient.countSignificantDigits();
+
     return std::make_pair(quotient, BigUnsignedInt(std::to_string(r)));
 }
 
@@ -502,7 +502,6 @@ void BigUnsignedInt::resetToZero()
 void BigUnsignedInt::subtract(UnsignedVector::iterator b1, UnsignedVector::iterator e1,
                               UnsignedVector::const_iterator b2, UnsignedVector::const_iterator e2)
 {
-    
     size_type length = min(e1 - b1, e2 - b2);
 
     Digit k = 1;

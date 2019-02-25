@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "../../src/BigUnsignedInt.h"
+#include "../../src/RandomGenerator.h"
 
 using namespace std;
 
@@ -58,9 +59,9 @@ TEST(Addition, Test_01)
 {
     for (const auto& d:addTestData)
     {
-        BigUnsignedInt a( get<0>(d));
-        BigUnsignedInt b( get<1>(d));
-        BigUnsignedInt expected( get<2>(d));
+        BigUnsignedInt a(get<0>(d));
+        BigUnsignedInt b(get<1>(d));
+        BigUnsignedInt expected(get<2>(d));
         BigUnsignedInt c = a + b;
         EXPECT_EQ(c, expected);
     }
@@ -105,9 +106,9 @@ TEST(Subtraction, Test_01)
 {
     for (const auto& d:subtractTestData)
     {
-        BigUnsignedInt a( get<0>(d));
+        BigUnsignedInt a(get<0>(d));
         BigUnsignedInt b(get<1>(d));
-        BigUnsignedInt expected( get<2>(d));
+        BigUnsignedInt expected(get<2>(d));
         BigUnsignedInt c = a - b;
         EXPECT_EQ(c, expected);
     }
@@ -163,7 +164,7 @@ TEST(Multiplication, Test_01)
     {
         BigUnsignedInt a(get<0>(d));
         BigUnsignedInt b(get<1>(d));
-        BigUnsignedInt expected( get<2>(d));
+        BigUnsignedInt expected(get<2>(d));
         BigUnsignedInt c = a * b;
         EXPECT_EQ(c, expected);
     }
@@ -245,10 +246,10 @@ TEST(Division, Test_01)
 {
     for (const auto& d:divisionTestData)
     {
-        BigUnsignedInt a( get<0>(d));
-        BigUnsignedInt b( get<1>(d));
-        BigUnsignedInt q( get<2>(d));
-        BigUnsignedInt r( get<3>(d));
+        BigUnsignedInt a(get<0>(d));
+        BigUnsignedInt b(get<1>(d));
+        BigUnsignedInt q(get<2>(d));
+        BigUnsignedInt r(get<3>(d));
         auto result = a.quotientAndRem(b);
         EXPECT_EQ(result.first, q);
         EXPECT_EQ(result.second, r);
@@ -259,9 +260,9 @@ TEST(Mod, Test_01)
 {
     for (const auto& d:divisionTestData)
     {
-        BigUnsignedInt a( get<0>(d));
-        BigUnsignedInt b( get<1>(d));
-        BigUnsignedInt r( get<3>(d));
+        BigUnsignedInt a(get<0>(d));
+        BigUnsignedInt b(get<1>(d));
+        BigUnsignedInt r(get<3>(d));
         EXPECT_EQ(a %= b, r);
     }
 }
@@ -276,10 +277,10 @@ TEST(MultInverse, Test_01)
 {
     for (const auto& d:multInverseTestData)
     {
-        BigUnsignedInt a( get<0>(d));
-        BigUnsignedInt module( get<1>(d));
+        BigUnsignedInt a(get<0>(d));
+        BigUnsignedInt module(get<1>(d));
         BigUnsignedInt multInverse = a.multInverse(module);
-        BigUnsignedInt expected( get<2>(d));
+        BigUnsignedInt expected(get<2>(d));
         EXPECT_EQ(multInverse, expected);
     }
 }
@@ -298,8 +299,8 @@ TEST(Pow, Test_01)
     for (const auto& d:powTestData)
     {
         BigUnsignedInt a(get<0>(d));
-        BigUnsignedInt degree( get<1>(d));
-        BigUnsignedInt expected( get<2>(d));
+        BigUnsignedInt degree(get<1>(d));
+        BigUnsignedInt expected(get<2>(d));
         EXPECT_EQ(a.pow(degree), expected);
     }
 }
@@ -319,10 +320,10 @@ TEST(ModularPow, Test_01)
 {
     for (const auto& d:modularPowTestData)
     {
-        BigUnsignedInt a( get<0>(d));
-        BigUnsignedInt degree( get<1>(d));
-        BigUnsignedInt module( get<2>(d));
-        BigUnsignedInt expected( get<3>(d));
+        BigUnsignedInt a(get<0>(d));
+        BigUnsignedInt degree(get<1>(d));
+        BigUnsignedInt module(get<2>(d));
+        BigUnsignedInt expected(get<3>(d));
         EXPECT_EQ(a.pow(degree, module), expected);
     }
 }
@@ -381,7 +382,7 @@ TEST(LessOrEqualComparison, Test_01)
     for (const auto& d:lessComparisonTestData)
     {
         BigUnsignedInt a(get<0>(d));
-        BigUnsignedInt b( get<1>(d));
+        BigUnsignedInt b(get<1>(d));
         EXPECT_EQ(b <= a, !get<2>(d));
     }
 }
@@ -390,8 +391,8 @@ TEST(GreaterOrEqualComparison, Test_01)
 {
     for (const auto& d:lessComparisonTestData)
     {
-        BigUnsignedInt a( get<0>(d));
-        BigUnsignedInt b( get<1>(d));
+        BigUnsignedInt a(get<0>(d));
+        BigUnsignedInt b(get<1>(d));
         EXPECT_EQ(a >= b, !get<2>(d));
     }
 }
@@ -411,4 +412,35 @@ TEST(IsPrime, Test_01)
         BigUnsignedInt a(get<0>(d));
         EXPECT_EQ(a.isPrime(), get<1>(d));
     }
+}
+
+TEST(RSA, Test_01)
+{
+    //10100000011
+    const BigUnsignedInt::size_type size = 11;
+    RandomGenerator rnd(4081u, 25673u, 121500u, 0u);
+    BigUnsignedInt random = rnd.next(size);
+    while (!random.isPrime())
+        random = rnd.next(size);
+    EXPECT_EQ(BigUnsignedInt("10100000011"), random);
+}
+
+TEST(RSA, Test_02)
+{
+    const BigUnsignedInt::size_type size = 12;
+    RandomGenerator rnd(4081u, 25673u, 121500u, 0u);
+    BigUnsignedInt random = rnd.next(size);
+    while (!random.isPrime())
+        random = rnd.next(size);
+    EXPECT_EQ(BigUnsignedInt("110111100101"), random);
+}
+
+TEST(RSA, Test_03)
+{
+    const BigUnsignedInt::size_type size = 20;
+    RandomGenerator rnd(4081u, 25673u, 121500u, 0u);
+    BigUnsignedInt random = rnd.next(size);
+    while (!random.isPrime())
+        random = rnd.next(size);
+    EXPECT_EQ(BigUnsignedInt("11111000000011110011"), random);
 }
