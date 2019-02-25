@@ -276,6 +276,7 @@ private:
      */
     static void subtract(UnsignedVector::iterator b1, UnsignedVector::iterator e1,
                          UnsignedVector::const_iterator b2, UnsignedVector::const_iterator e2);
+
     /**
      * \brief Resets number to zero
      */
@@ -289,6 +290,12 @@ private:
      * @param number - object to store the number converted from string
      */
     static void createFromString(std::string_view str, BigUnsignedInt& number);
+
+    /**
+     *
+     * @return
+     */
+    static size_type countSignificantDigits(UnsignedVector::const_iterator b, UnsignedVector::const_iterator e);
 
     /**
      * Sets the _digitsNumber with appropriate number.

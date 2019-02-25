@@ -553,4 +553,16 @@ void BigUnsignedInt::createFromString(string_view str, BigUnsignedInt& number)
     }
 }
 
+BigUnsignedInt::size_type BigUnsignedInt::countSignificantDigits(UnsignedVector::const_iterator b,
+                                                                 UnsignedVector::const_iterator e)
+{
+    size_type count = e - b;
+    while (b != e && *b == 0)
+    {
+        --count;
+        ++b;
+    }
+    return min(count, 1u);
+}
+
 void BigUnsignedInt::resize(size_type size) { _digits.resize(size, 0); }
