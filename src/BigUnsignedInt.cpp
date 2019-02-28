@@ -434,6 +434,18 @@ bool BigUnsignedInt::isPrime() const
     return false;
 }
 
+std::vector<char> BigUnsignedInt::toBytes(size_type size) const
+{
+    if(size < _digitsNumber / CHAR_BIT + (_digitsNumber % CHAR_BIT == 0 ? 0 : 1))
+        throw invalid_argument("Number requeres more bytes");
+
+    vector<char> result(size, 0);
+    for(size_type i = 0; i < _digitsNumber; ++i)
+        result[i / CHAR_BIT] |= _digits[i] << (i % CHAR_BIT);
+
+    return result;
+}
+
 BigUnsignedInt::size_type BigUnsignedInt::countSignificantDigits()
 {
     size_type zeroesNumber = 0;

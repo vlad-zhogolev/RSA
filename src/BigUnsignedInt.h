@@ -244,7 +244,18 @@ public:
      */
     BigUnsignedInt multInverse(const BigUnsignedInt& a);
 
+    /**
+     *
+     * @return
+     */
     bool isPrime() const;
+
+    /**
+     *
+     * @param size
+     * @return
+     */
+    std::vector<char> toBytes(size_type size) const;
 
     /**
      * \brief Provides access to digits of the number by index.
@@ -264,6 +275,9 @@ public:
      * @return String representation of number
      */
     std::string to_string() const;
+
+    size_type length() const { return _digitsNumber; }
+
 
 private:
 

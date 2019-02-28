@@ -2,6 +2,7 @@
 #include <fstream>
 #include "BigUnsignedInt.h"
 #include "RandomGenerator.h"
+#include "RSA.h"
 
 using namespace std;
 
