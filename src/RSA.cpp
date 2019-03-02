@@ -25,9 +25,8 @@ void RSA::encodeFile(std::string_view input, std::string_view output, const BigU
     size_t counter = 0;
     char byte;
 
-    //fout << tail << "\n";
-
     fin >> noskipws;
+    fout << length / bufferSize << " " << tail << "\n";
     while (fin >> byte)
     {
         for (size_t i = 0; i < CHAR_BIT; ++i)
@@ -83,17 +82,17 @@ void RSA::decodeFile(std::string_view input, std::string_view output, const BigU
     size_t counter = 0;
     char byte;
 
-    size_t tail;
+    size_t length, tail;
+    fin >> length >> tail;
     fin >> noskipws;
-    //fin >> tail;
-    //fin >> byte;
+    fin >> byte;
     while (fin >> byte)
     {
         for (size_t i = 0; i < CHAR_BIT; ++i)
             message[i + counter * CHAR_BIT] = (byte & (1u << i)) > 0 ? 1 : 0;
         ++counter;
 
-        if (counter == bufferSize)
+        if (counter == bufferSize && length-- > 0)
         {
             cout << "read message" << endl << message << endl;
             message.countAndSetSignificantDigits();
@@ -117,7 +116,7 @@ void RSA::decodeFile(std::string_view input, std::string_view output, const BigU
         cout << "read message" << endl << message << endl;
         message.countAndSetSignificantDigits();
         BigUnsignedInt encrypted = message.pow(d, n);
-        auto bytes = encrypted.toBytes(bufferSize);
+        auto bytes = encrypted.toBytes(tail);
         cout << "decoded message" << endl << encrypted << endl;
         for (BigUnsignedInt::size_type i = 0; i < tail; ++i)
         {

@@ -146,34 +146,6 @@ BigUnsignedInt& BigUnsignedInt::operator+=(const BigUnsignedInt& other)
 
 BigUnsignedInt& BigUnsignedInt::operator-=(const BigUnsignedInt& other)
 {
-    /*size_type length = min(_digitsNumber, other._digitsNumber);
-
-    Digit k = 1; // Tracks if we engaged from next digit (1: no engage, 0: engaged)
-    std::transform(
-            _digits.begin(), _digits.begin() + length,
-            other._digits.begin(), _digits.begin(),
-            [&k, this](Digit a, Digit b) {
-                // We always perform an engage from next digit.
-                a += _max_digit - b + k;
-                // Check if engage was necessary (a is in [0, _base) ) and set appropriate k
-                k = a < _base ? 0 : 1;
-                return a < _base ? a : a - _base;
-            });
-
-    auto it = _digits.begin() + length;
-    // Engage while necessary
-    while (k == 0)
-    {
-        if (*it == 0)
-            *it = _max_digit;
-        else
-        {
-            --(*it);
-            k = 1;
-        }
-        ++it;
-    }*/
-
     subtract(_digits.begin(), _digits.begin() + _digitsNumber,
              other._digits.begin(), other._digits.begin() + other._digitsNumber);
 
@@ -565,7 +537,6 @@ void BigUnsignedInt::createFromString(string_view str, BigUnsignedInt& number)
     {
         if (*it >= number._base)
             throw invalid_argument("Digits in string must be less than base");
-
     }
 }
 
