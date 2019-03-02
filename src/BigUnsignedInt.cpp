@@ -17,8 +17,7 @@ std::istream& operator>>(std::istream& is, BigUnsignedInt& bigUnsignedInt)
 
 std::ostream& operator<<(std::ostream& os, const BigUnsignedInt& number)
 {
-    for (auto it = number._digits.rbegin() + number.startIndex();
-         it != number._digits.rend(); ++it)
+    for (auto it = number._digits.rbegin() + number.startIndex(); it != number._digits.rend(); ++it)
         os << static_cast<unsigned char>(*it + '0');
     return os;
 }
@@ -436,11 +435,11 @@ bool BigUnsignedInt::isPrime() const
 
 std::vector<char> BigUnsignedInt::toBytes(size_type size) const
 {
-    if(size < _digitsNumber / CHAR_BIT + (_digitsNumber % CHAR_BIT == 0 ? 0 : 1))
-        throw invalid_argument("Number requeres more bytes");
+    if (size < _digitsNumber / CHAR_BIT + (_digitsNumber % CHAR_BIT == 0 ? 0 : 1))
+        throw invalid_argument("number requres more bytes");
 
     vector<char> result(size, 0);
-    for(size_type i = 0; i < _digitsNumber; ++i)
+    for (size_type i = 0; i < _digitsNumber; ++i)
         result[i / CHAR_BIT] |= _digits[i] << (i % CHAR_BIT);
 
     return result;
@@ -502,6 +501,11 @@ std::string BigUnsignedInt::to_string() const
     for (auto it = _digits.rbegin() + startIndex(); it != _digits.rend(); ++it)
         ss << *it;
     return ss.str();
+}
+
+void BigUnsignedInt::countAndSetSignificantDigits()
+{
+    _digitsNumber = countSignificantDigits();
 }
 
 void BigUnsignedInt::resetToZero()

@@ -278,6 +278,7 @@ public:
 
     size_type length() const { return _digitsNumber; }
 
+    void countAndSetSignificantDigits();
 
 private:
 

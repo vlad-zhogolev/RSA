@@ -10,9 +10,12 @@
 #include "BigUnsignedInt.h"
 
 class RSA {
-    void encodeFile(std::string_view input, std::string_view output, const BigUnsignedInt& e, const BigUnsignedInt& n);
+public:
+    static void
+    encodeFile(std::string_view input, std::string_view output, const BigUnsignedInt& e, const BigUnsignedInt& n);
 
-    void decodeFile(std::string_view input, std::string_view output, const BigUnsignedInt& d, const BigUnsignedInt& n);
+    static void
+    decodeFile(std::string_view input, std::string_view output, const BigUnsignedInt& d, const BigUnsignedInt& n);
 };
 
 

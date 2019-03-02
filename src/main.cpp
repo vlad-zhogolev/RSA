@@ -31,7 +31,7 @@ pair<BigUnsignedInt, size_t> findPrimeWithCounter(BigUnsignedInt::size_type size
 
 std::ostream& operator<<(ostream& os, const pair<BigUnsignedInt, size_t>& p)
 {
-    os << "Checked " << p.second << " numbers, before found prime: " << p.first;
+    os << "Checked " << p.second << " numbers, before found prime:" << "\n" << p.first;
 }
 
 int main()
@@ -39,20 +39,20 @@ int main()
     BigUnsignedInt message(SIZE);
     ifstream fin("input.txt");
 
-    char byte;
-    size_t counter = 0;
-    while (counter < SIZE_IN_BYTES && fin >> byte)
-    {
-        for (size_t i = 0; i < CHAR_BIT; ++i)
-            message[i + counter * CHAR_BIT] = (byte & (1u << i)) > 0 ? 1 : 0;
-        ++counter;
-    }
-    cout << message << endl;
-
-    RandomGenerator rg(4081u, 25673u, 121500u, 0u);
-    auto p = findPrimeWithCounter(SIZE, rg);
+    //RandomGenerator rg(4081u, 25673u, 121500u, 0u);
+    /*10101111011001110010101000010010011101001100111111110110010101010010011010110010
+111001001000010010000101101111111000010111101111*/
+    //auto p = findPrimeWithCounter(SIZE, rg);
+    auto p = make_pair(
+            BigUnsignedInt("10101111011001110010101000010010011101001100111111110110010101010010011010110010"
+                                   "111001001000010010000101101111111000010111101111"), SIZE);
     cout << endl << p << endl;
-    auto q = findPrimeWithCounter(SIZE, rg);
+    /*11100101011010001011101101101111000100101000111001000100010101110100001001000001
+000000111111111011100000000101110001110011011001*/
+    //auto q = findPrimeWithCounter(SIZE, rg);
+    auto q = make_pair(
+            BigUnsignedInt("11100101011010001011101101101111000100101000111001000100010101110100001001000001"
+                                   "000000111111111011100000000101110001110011011001"), SIZE);
     cout << endl << q << endl;
 
     BigUnsignedInt n = p.first * q.first;
@@ -60,9 +60,8 @@ int main()
     BigUnsignedInt e("100000001");// 257
     BigUnsignedInt d = e.multInverse(fi);
 
-    BigUnsignedInt encoded = message.pow(e, n);
-    BigUnsignedInt decoded = encoded.pow(d, n);
+    RSA::encodeFile("input.txt", "output.txt", e, n);
 
-    cout << decoded;
+    RSA::decodeFile("output.txt", "decoded.txt", d, n);
     return 0;
 }
