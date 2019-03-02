@@ -244,7 +244,18 @@ public:
      */
     BigUnsignedInt multInverse(const BigUnsignedInt& a);
 
+    /**
+     *
+     * @return
+     */
     bool isPrime() const;
+
+    /**
+     *
+     * @param size
+     * @return
+     */
+    std::vector<char> toBytes(size_type size) const;
 
     /**
      * \brief Provides access to digits of the number by index.
@@ -265,7 +276,21 @@ public:
      */
     std::string to_string() const;
 
+    size_type length() const { return _digitsNumber; }
+
+    void countAndSetSignificantDigits();
+
 private:
+
+    /**
+     * Perfroms subtraction of second range from first. First range number must be greater than second.s
+     * @param b1
+     * @param e1
+     * @param b2
+     * @param e2
+     */
+    static void subtract(UnsignedVector::iterator b1, UnsignedVector::iterator e1,
+                         UnsignedVector::const_iterator b2, UnsignedVector::const_iterator e2);
 
     /**
      * \brief Resets number to zero
@@ -280,6 +305,12 @@ private:
      * @param number - object to store the number converted from string
      */
     static void createFromString(std::string_view str, BigUnsignedInt& number);
+
+    /**
+     *
+     * @return
+     */
+    static size_type countSignificantDigits(UnsignedVector::const_iterator b, UnsignedVector::const_iterator e);
 
     /**
      * Sets the _digitsNumber with appropriate number.

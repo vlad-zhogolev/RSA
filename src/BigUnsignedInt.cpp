@@ -17,8 +17,7 @@ std::istream& operator>>(std::istream& is, BigUnsignedInt& bigUnsignedInt)
 
 std::ostream& operator<<(std::ostream& os, const BigUnsignedInt& number)
 {
-    for (auto it = number._digits.rbegin() + number.startIndex();
-         it != number._digits.rend(); ++it)
+    for (auto it = number._digits.rbegin() + number.startIndex(); it != number._digits.rend(); ++it)
         os << static_cast<unsigned char>(*it + '0');
     return os;
 }
@@ -147,33 +146,8 @@ BigUnsignedInt& BigUnsignedInt::operator+=(const BigUnsignedInt& other)
 
 BigUnsignedInt& BigUnsignedInt::operator-=(const BigUnsignedInt& other)
 {
-    size_type length = min(_digitsNumber, other._digitsNumber);
-
-    Digit k = 1; // Tracks if we engaged from next digit (1: no engage, 0: engaged)
-    std::transform(
-            _digits.begin(), _digits.begin() + length,
-            other._digits.begin(), _digits.begin(),
-            [&k, this](Digit a, Digit b) {
-                // We always perform an engage from next digit.
-                a += _max_digit - b + k;
-                // Check if engage was necessary (a is in [0, _base) ) and set appropriate k
-                k = a < _base ? 0 : 1;
-                return a < _base ? a : a - _base;
-            });
-
-    auto it = _digits.begin() + length;
-    // Engage while necessary
-    while (k == 0)
-    {
-        if (*it == 0)
-            *it = _max_digit;
-        else
-        {
-            --(*it);
-            k = 1;
-        }
-        ++it;
-    }
+    subtract(_digits.begin(), _digits.begin() + _digitsNumber,
+             other._digits.begin(), other._digits.begin() + other._digitsNumber);
 
     // Set appropriate _digitNumber
     _digitsNumber = countSignificantDigits();
@@ -431,6 +405,18 @@ bool BigUnsignedInt::isPrime() const
     return false;
 }
 
+std::vector<char> BigUnsignedInt::toBytes(size_type size) const
+{
+    if (size < _digitsNumber / CHAR_BIT + (_digitsNumber % CHAR_BIT == 0 ? 0 : 1))
+        throw invalid_argument("number requres more bytes");
+
+    vector<char> result(size, 0);
+    for (size_type i = 0; i < _digitsNumber; ++i)
+        result[i / CHAR_BIT] |= _digits[i] << (i % CHAR_BIT);
+
+    return result;
+}
+
 BigUnsignedInt::size_type BigUnsignedInt::countSignificantDigits()
 {
     size_type zeroesNumber = 0;
@@ -459,8 +445,8 @@ std::pair<BigUnsignedInt, BigUnsignedInt> BigUnsignedInt::quotientAndRem(Digit d
         r = sum % d;
         quotient[j] = sum / d;
     }
-
     quotient._digitsNumber = quotient.countSignificantDigits();
+
     return std::make_pair(quotient, BigUnsignedInt(std::to_string(r)));
 }
 
@@ -489,11 +475,45 @@ std::string BigUnsignedInt::to_string() const
     return ss.str();
 }
 
+void BigUnsignedInt::countAndSetSignificantDigits()
+{
+    _digitsNumber = countSignificantDigits();
+}
+
 void BigUnsignedInt::resetToZero()
 {
     for (Digit& digit:_digits)
         digit = 0;
     _digitsNumber = 1;
+}
+
+void BigUnsignedInt::subtract(UnsignedVector::iterator b1, UnsignedVector::iterator e1,
+                              UnsignedVector::const_iterator b2, UnsignedVector::const_iterator e2)
+{
+    size_type length = min(e1 - b1, e2 - b2);
+
+    Digit k = 1;
+    std::transform(b1, b1 + length, b2, b1, [&k](Digit a, Digit b) {
+        // We always perform an engage from next digit.
+        a += _max_digit - b + k;
+        // Check if engage was necessary (a is in [0, _base) ) and set appropriate k
+        k = a < _base ? 0 : 1;
+        return a < _base ? a : a - _base;
+    });
+
+    auto it = b1 + length;
+    // Engage while necessary
+    while (k == 0)
+    {
+        if (*it == 0)
+            *it = _max_digit;
+        else
+        {
+            --(*it);
+            k = 1;
+        }
+        ++it;
+    }
 }
 
 void BigUnsignedInt::createFromString(string_view str, BigUnsignedInt& number)
@@ -517,8 +537,19 @@ void BigUnsignedInt::createFromString(string_view str, BigUnsignedInt& number)
     {
         if (*it >= number._base)
             throw invalid_argument("Digits in string must be less than base");
-
     }
+}
+
+BigUnsignedInt::size_type BigUnsignedInt::countSignificantDigits(UnsignedVector::const_iterator b,
+                                                                 UnsignedVector::const_iterator e)
+{
+    size_type count = e - b;
+    while (b != e && *b == 0)
+    {
+        --count;
+        ++b;
+    }
+    return min(count, 1u);
 }
 
 void BigUnsignedInt::resize(size_type size) { _digits.resize(size, 0); }
