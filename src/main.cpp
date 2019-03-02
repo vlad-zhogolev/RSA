@@ -39,18 +39,18 @@ int main()
     BigUnsignedInt message(SIZE);
     ifstream fin("input.txt");
 
-    //RandomGenerator rg(4081u, 25673u, 121500u, 0u);
+    RandomGenerator rg(4081u, 25673u, 121500u, 0u);
 
-    //auto p = findPrimeWithCounter(SIZE, rg);
-    auto p = make_pair(
-            BigUnsignedInt("10101111011001110010101000010010011101001100111111110110010101010010011010110010"
-                                   "111001001000010010000101101111111000010111101111"), SIZE);
+    auto p = findPrimeWithCounter(SIZE, rg);
+    //auto p = make_pair(
+    //        BigUnsignedInt("10101111011001110010101000010010011101001100111111110110010101010010011010110010"
+    //                               "111001001000010010000101101111111000010111101111"), SIZE);
     cout << endl << p << endl;
 
-    //auto q = findPrimeWithCounter(SIZE, rg);
-    auto q = make_pair(
-            BigUnsignedInt("11100101011010001011101101101111000100101000111001000100010101110100001001000001"
-                                   "000000111111111011100000000101110001110011011001"), SIZE);
+    auto q = findPrimeWithCounter(SIZE, rg);
+    //auto q = make_pair(
+    //        BigUnsignedInt("11100101011010001011101101101111000100101000111001000100010101110100001001000001"
+    //                               "000000111111111011100000000101110001110011011001"), SIZE);
     cout << endl << q << endl;
 
     BigUnsignedInt n = p.first * q.first;
@@ -58,8 +58,8 @@ int main()
     BigUnsignedInt e("100000001");// 257
     BigUnsignedInt d = e.multInverse(fi);
 
-    RSA::encodeFile("input.txt", "output.txt", e, n);
+    RSA::encodeFile("input.txt", "encoded.txt", e, n);
 
-    RSA::decodeFile("output.txt", "decoded.txt", d, n);
+    RSA::decodeFile("encoded.txt", "decoded.txt", d, n);
     return 0;
 }

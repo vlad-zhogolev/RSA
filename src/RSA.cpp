@@ -35,11 +35,9 @@ void RSA::encodeFile(std::string_view input, std::string_view output, const BigU
 
         if (counter == bufferSize)
         {
-            cout << "encode message" << endl << message << endl;
             message.countAndSetSignificantDigits();
             BigUnsignedInt encrypted = message.pow(e, n);
             auto bytes = encrypted.toBytes(bufferSize);
-            cout << "encoded message" << endl << encrypted << endl;
             for (char b:bytes)
             {
                 fout << b;
@@ -54,11 +52,9 @@ void RSA::encodeFile(std::string_view input, std::string_view output, const BigU
         for (size_t i = counter * CHAR_BIT; i < message.length(); ++i)
             message[i] = 0;
 
-        cout << "encode message" << endl << message << endl;
         message.countAndSetSignificantDigits();
         BigUnsignedInt encrypted = message.pow(e, n);
         auto bytes = encrypted.toBytes(bufferSize);
-        cout << "encoded message" << endl << encrypted << endl;
         for (char b:bytes)
         {
             fout << b;
@@ -94,11 +90,9 @@ void RSA::decodeFile(std::string_view input, std::string_view output, const BigU
 
         if (counter == bufferSize && length-- > 0)
         {
-            cout << "read message" << endl << message << endl;
             message.countAndSetSignificantDigits();
             BigUnsignedInt encrypted = message.pow(d, n);
             auto bytes = encrypted.toBytes(bufferSize);
-            cout << "decoded message" << endl << encrypted << endl;
             for (char b:bytes)
             {
                 fout << b;
@@ -113,11 +107,9 @@ void RSA::decodeFile(std::string_view input, std::string_view output, const BigU
         for (size_t i = counter * CHAR_BIT; i < message.length(); ++i)
             message[i] = 0;
 
-        cout << "read message" << endl << message << endl;
         message.countAndSetSignificantDigits();
         BigUnsignedInt encrypted = message.pow(d, n);
         auto bytes = encrypted.toBytes(tail);
-        cout << "decoded message" << endl << encrypted << endl;
         for (BigUnsignedInt::size_type i = 0; i < tail; ++i)
         {
             fout << bytes[i];
