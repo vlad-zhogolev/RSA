@@ -344,19 +344,19 @@ BigUnsignedInt BigUnsignedInt::multInverse(const BigUnsignedInt& v)
     BigUnsignedInt inv;
     BigUnsignedInt t1;
     int iter;
-    /* Step X1. Initialise */
+    // Step X1. Initialise
     BigUnsignedInt u1(one);
     BigUnsignedInt v1(zero);
 
     BigUnsignedInt u3(*this);
-    //BigUnsignedInt v1(_base, "0");
+    // BigUnsignedInt v1(_base, "0");
     BigUnsignedInt v3(v);
-    /* Remember odd/even iterations */
+    // Remember odd/even iterations
     iter = 1;
-    /* Step X2. Loop while v3 != 0 */
+    // Step X2. Loop while v3 != 0
     while (v3 != zero)
     {
-        /* Step X3. Divide and "Subtract" */
+        // Step X3. Divide and "Subtract"
         auto res = u3.quotientAndRem(v3);
         t1 = u1 + res.first * v1;
         /* Swap */
@@ -366,10 +366,10 @@ BigUnsignedInt BigUnsignedInt::multInverse(const BigUnsignedInt& v)
         v3 = res.second;
         iter = -iter;
     }
-    /* Make sure u3 = gcd(u,v) == 1 */
+    // Make sure u3 = gcd(u,v) == 1
     if (u3 != one)
-        return zero;   /* Error: No inverse exists */
-    /* Ensure a positive result */
+        return zero;   // Error: No inverse exists
+    // Ensure a positive result
     if (iter < 0)
         return v - u1;
     else

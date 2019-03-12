@@ -41,25 +41,39 @@ int main()
 
     RandomGenerator rg(4081u, 25673u, 121500u, 0u);
 
+    cout << "Searching for first prime" << endl;
     auto p = findPrimeWithCounter(SIZE, rg);
     //auto p = make_pair(
     //        BigUnsignedInt("10101111011001110010101000010010011101001100111111110110010101010010011010110010"
     //                               "111001001000010010000101101111111000010111101111"), SIZE);
     cout << endl << p << endl;
 
+    cout << "Searching for second prime" << endl;
     auto q = findPrimeWithCounter(SIZE, rg);
     //auto q = make_pair(
     //        BigUnsignedInt("11100101011010001011101101101111000100101000111001000100010101110100001001000001"
     //                               "000000111111111011100000000101110001110011011001"), SIZE);
     cout << endl << q << endl;
 
+    cout << "n:" << endl;
     BigUnsignedInt n = p.first * q.first;
+
+    cout << "fi:" << endl;
     BigUnsignedInt fi = (p.first - one) * (q.first - one);
+
+    cout << "e:" << endl;
     BigUnsignedInt e("100000001");// 257
+
+    cout << "d:" << endl;
     BigUnsignedInt d = e.multInverse(fi);
 
+    cout << "Encoding file" << endl;
     RSA::encodeFile("input.txt", "encoded.txt", e, n);
 
+    cout << "Decoding file" << endl;
     RSA::decodeFile("encoded.txt", "decoded.txt", d, n);
+
+    cout << "Finished decoding" << endl;
+
     return 0;
 }
