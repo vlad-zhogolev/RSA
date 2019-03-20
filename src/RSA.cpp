@@ -19,7 +19,7 @@ void RSA::encodeFile(std::string_view input, std::string_view output, const BigU
     fin.seekg(0, fin.end);
     size_t length = fin.tellg();
     fin.seekg(0, fin.beg);
-    const BigUnsignedInt::size_type bufferSize = n.length() / CHAR_BIT;
+    const BigUnsignedInt::size_type bufferSize = n.length() / CHAR_BIT + (n.length() % CHAR_BIT > 0 ? 1 : 0);
     size_t tail = length % bufferSize;
     BigUnsignedInt message(n.length());
     size_t counter = 0;
