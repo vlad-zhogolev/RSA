@@ -73,7 +73,7 @@ void RSA::decodeFile(std::string_view input, std::string_view output, const BigU
     if (!fout)
         throw invalid_argument("Can't open output file");
 
-    const BigUnsignedInt::size_type bufferSize = n.length() / CHAR_BIT;
+    const BigUnsignedInt::size_type bufferSize = n.length() / CHAR_BIT + (n.length() % CHAR_BIT > 0 ? 1 : 0);
     BigUnsignedInt message(n.length());
     size_t counter = 0;
     char byte;
