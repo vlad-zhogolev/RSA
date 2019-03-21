@@ -21,7 +21,8 @@ void RSA::encodeFile(std::string_view input, std::string_view output, const BigU
     fin.seekg(0, fin.beg);
     const BigUnsignedInt::size_type bufferSize = n.length() / CHAR_BIT + (n.length() % CHAR_BIT > 0 ? 1 : 0);
     size_t tail = length % bufferSize;
-    BigUnsignedInt message(n.length());
+    //BigUnsignedInt message(n.length());
+    BigUnsignedInt message(bufferSize * CHAR_BIT);
     size_t counter = 0;
     char byte;
 
@@ -74,7 +75,8 @@ void RSA::decodeFile(std::string_view input, std::string_view output, const BigU
         throw invalid_argument("Can't open output file");
 
     const BigUnsignedInt::size_type bufferSize = n.length() / CHAR_BIT + (n.length() % CHAR_BIT > 0 ? 1 : 0);
-    BigUnsignedInt message(n.length());
+    //BigUnsignedInt message(n.length());
+    BigUnsignedInt message(bufferSize * CHAR_BIT);
     size_t counter = 0;
     char byte;
 

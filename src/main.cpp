@@ -7,7 +7,7 @@
 using namespace std;
 
 // Size of key in bytes
-const BigUnsignedInt::size_type SIZE_IN_BYTES = 16;
+const BigUnsignedInt::size_type SIZE_IN_BYTES = 4;
 const BigUnsignedInt::size_type SIZE = CHAR_BIT * SIZE_IN_BYTES;
 
 /**
@@ -39,27 +39,37 @@ int main()
     BigUnsignedInt message(SIZE);
     ifstream fin("input.txt");
 
-    RandomGenerator rg(4081u, 25673u, 121500u, 0u);
+    //RandomGenerator rg(4081u, 25673u, 121500u, 0u);
+    RandomGenerator rg(4521u, 25673u, 121500u, 0u);
 
-    cout << "Searching for first prime" << endl;
-    auto p = findPrimeWithCounter(SIZE, rg);
-    //auto p = make_pair(
-    //        BigUnsignedInt("10101111011001110010101000010010011101001100111111110110010101010010011010110010"
-    //                               "111001001000010010000101101111111000010111101111"), SIZE);
-    cout << endl << p << endl;
+    BigUnsignedInt n;
+    BigUnsignedInt p;
+    BigUnsignedInt q;
 
-    cout << "Searching for second prime" << endl;
-    auto q = findPrimeWithCounter(SIZE, rg);
-    //auto q = make_pair(
-    //        BigUnsignedInt("11100101011010001011101101101111000100101000111001000100010101110100001001000001"
-    //                               "000000111111111011100000000101110001110011011001"), SIZE);
-    cout << endl << q << endl;
+    do
+    {
+        cout << "Searching for first prime" << endl;
+        auto firstPair = findPrimeWithCounter(SIZE, rg);
+        //auto p = make_pair(
+        //        BigUnsignedInt("10101111011001110010101000010010011101001100111111110110010101010010011010110010"
+        //                               "111001001000010010000101101111111000010111101111"), SIZE);
+        cout << endl << p << endl;
 
-    cout << "n:" << endl;
-    BigUnsignedInt n = p.first * q.first;
+        cout << "Searching for second prime" << endl;
+        auto secondPair = findPrimeWithCounter(SIZE, rg);
+        //auto q = make_pair(
+        //        BigUnsignedInt("11100101011010001011101101101111000100101000111001000100010101110100001001000001"
+        //                               "000000111111111011100000000101110001110011011001"), SIZE);
+        cout << endl << q << endl;
+
+        p = firstPair.first;
+        q = secondPair.first;
+
+        n = p * q;
+    }while(n.length() != 2 * SIZE);
 
     cout << "fi:" << endl;
-    BigUnsignedInt fi = (p.first - one) * (q.first - one);
+    BigUnsignedInt fi = (p - one) * (q - one);
 
     cout << "e:" << endl;
     BigUnsignedInt e("100000001");// 257
